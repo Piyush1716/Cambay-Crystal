@@ -48,9 +48,9 @@ CREATE TABLE public.orders (
   razorpay_payment_id text,
   payment_retry_count integer DEFAULT 0,
   last_payment_attempt_at timestamp with time zone,
-  user_id bigint,
+  user_id uuid,
   CONSTRAINT orders_pkey PRIMARY KEY (id),
-  CONSTRAINT orders_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id)
+  CONSTRAINT orders_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id)
 );
 CREATE TABLE public.order_items (
   id bigint GENERATED ALWAYS AS IDENTITY NOT NULL,
@@ -126,7 +126,7 @@ CREATE TABLE public.special_inquiries (
   created_at timestamp with time zone NOT NULL DEFAULT now(),
   CONSTRAINT special_inquiries_pkey PRIMARY KEY (id)
 );
-CREATE TABLE public.users (
+CREATE TABLE public.users_legacy (
   id bigint GENERATED ALWAYS AS IDENTITY NOT NULL,
   email text NOT NULL UNIQUE,
   phone text NOT NULL,
@@ -135,5 +135,16 @@ CREATE TABLE public.users (
   last_name text,
   created_at timestamp with time zone NOT NULL DEFAULT now(),
   updated_at timestamp with time zone NOT NULL DEFAULT now(),
-  CONSTRAINT users_pkey PRIMARY KEY (id)
+  CONSTRAINT users_legacy_pkey PRIMARY KEY (id)
+);
+CREATE TABLE public.profiles (
+  id uuid NOT NULL,
+  email text NOT NULL,
+  phone text,
+  first_name text,
+  last_name text,
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  updated_at timestamp with time zone NOT NULL DEFAULT now(),
+  CONSTRAINT profiles_pkey PRIMARY KEY (id),
+  CONSTRAINT profiles_id_fkey FOREIGN KEY (id) REFERENCES auth.users(id)
 );

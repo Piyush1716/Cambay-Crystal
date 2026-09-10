@@ -28,6 +28,7 @@
 | `image_url` | `text` |  Nullable |
 | `created_at` | `timestamptz` |  |
 | `available` | `bool` |  |
+| `home` | `bool` |  Nullable |
 
 ## Table `orders`
 
@@ -56,6 +57,7 @@
 | `razorpay_payment_id` | `text` |  Nullable |
 | `payment_retry_count` | `int4` |  Nullable |
 | `last_payment_attempt_at` | `timestamptz` |  Nullable |
+| `user_id` | `uuid` |  Nullable |
 
 ## Table `order_items`
 
@@ -150,4 +152,100 @@
 | `message` | `text` |  |
 | `inquiry_type` | `text` |  |
 | `created_at` | `timestamptz` |  |
+
+## Table `users_legacy`
+
+### Columns
+
+| Name | Type | Constraints |
+|------|------|-------------|
+| `id` | `int8` | Primary Identity |
+| `email` | `text` |  Unique |
+| `phone` | `text` |  |
+| `password` | `text` |  |
+| `first_name` | `text` |  Nullable |
+| `last_name` | `text` |  Nullable |
+| `created_at` | `timestamptz` |  |
+| `updated_at` | `timestamptz` |  |
+
+## Table `profiles`
+
+### Columns
+
+| Name | Type | Constraints |
+|------|------|-------------|
+| `id` | `uuid` | Primary |
+| `email` | `text` |  |
+| `phone` | `text` |  Nullable |
+| `first_name` | `text` |  Nullable |
+| `last_name` | `text` |  Nullable |
+| `created_at` | `timestamptz` |  |
+| `updated_at` | `timestamptz` |  |
+
+## RLS Policies
+
+### `products`
+
+| Policy | Command | Roles | Action | USING | WITH CHECK |
+|--------|---------|-------|--------|-------|------------|
+| `Public read access` | SELECT | public | PERMISSIVE | `true` | — |
+| `Public can read available products` | SELECT | public | PERMISSIVE | `(available = true)` | — |
+
+### `orders`
+
+| Policy | Command | Roles | Action | USING | WITH CHECK |
+|--------|---------|-------|--------|-------|------------|
+| `allow anon insert orders` | INSERT | anon | PERMISSIVE | — | `true` |
+| `users read own orders` | SELECT | authenticated | PERMISSIVE | `(email = (auth.jwt() ->> 'email'::text))` | — |
+| `allow anon select orders` | SELECT | anon | PERMISSIVE | `true` | — |
+| `allow anon update own orders` | UPDATE | anon | PERMISSIVE | `(status = ANY (ARRAY['payment_pending'::text, 'pending'::text]))` | `(status = ANY (ARRAY['confirmed'::text, 'cancelled'::text]))` |
+| `Anyone can create an order` | INSERT | public | PERMISSIVE | — | `true` |
+| `Order owner can read own order` | SELECT | public | PERMISSIVE | `true` | — |
+| `Anyone can update order status` | UPDATE | public | PERMISSIVE | `true` | — |
+| `orders: read own` | SELECT | public | PERMISSIVE | `((auth.uid() = user_id) OR (user_id IS NULL))` | — |
+
+### `order_items`
+
+| Policy | Command | Roles | Action | USING | WITH CHECK |
+|--------|---------|-------|--------|-------|------------|
+| `allow anon insert order_items` | INSERT | anon | PERMISSIVE | — | `true` |
+| `users read own order_items` | SELECT | authenticated | PERMISSIVE | `(order_id IN ( SELECT orders.id    FROM orders   WHERE (orders.email = (auth.jwt() ->> 'email'::text))))` | — |
+| `allow anon select order_items` | SELECT | anon | PERMISSIVE | `true` | — |
+| `Anyone can add order items` | INSERT | public | PERMISSIVE | — | `true` |
+| `Order items readable by anyone who knows the order_id` | SELECT | public | PERMISSIVE | `true` | — |
+
+### `product_images`
+
+| Policy | Command | Roles | Action | USING | WITH CHECK |
+|--------|---------|-------|--------|-------|------------|
+| `Public can read product images` | SELECT | public | PERMISSIVE | `(EXISTS ( SELECT 1    FROM products   WHERE ((products.id = product_images.product_id) AND (products.available = true))))` | — |
+
+### `categories`
+
+| Policy | Command | Roles | Action | USING | WITH CHECK |
+|--------|---------|-------|--------|-------|------------|
+| `Public read categories` | SELECT | anon, authenticated | PERMISSIVE | `true` | — |
+| `Public can read available categories` | SELECT | public | PERMISSIVE | `(available = true)` | — |
+
+### `payment_attempts`
+
+| Policy | Command | Roles | Action | USING | WITH CHECK |
+|--------|---------|-------|--------|-------|------------|
+| `Anyone can insert payment attempt` | INSERT | public | PERMISSIVE | — | `true` |
+| `Anyone can update payment attempt` | UPDATE | public | PERMISSIVE | `true` | — |
+
+### `users_legacy`
+
+| Policy | Command | Roles | Action | USING | WITH CHECK |
+|--------|---------|-------|--------|-------|------------|
+| `anon insert users` | INSERT | anon | PERMISSIVE | — | `true` |
+| `anon select users` | SELECT | anon | PERMISSIVE | `true` | — |
+| `anon update users` | UPDATE | anon | PERMISSIVE | `true` | — |
+
+### `profiles`
+
+| Policy | Command | Roles | Action | USING | WITH CHECK |
+|--------|---------|-------|--------|-------|------------|
+| `profiles: read own` | SELECT | public | PERMISSIVE | `(auth.uid() = id)` | — |
+| `profiles: update own` | UPDATE | public | PERMISSIVE | `(auth.uid() = id)` | — |
 

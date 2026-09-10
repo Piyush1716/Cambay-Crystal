@@ -48,7 +48,7 @@ export async function getSitemap(req, res) {
     // Fetch all active category slugs
     const { data: categories, error: catErr } = await supabase
       .from("categories")
-      .select("slug, updated_at")
+      .select("slug, created_at")
       .eq("available", true)
       .order("slug");
 
@@ -60,7 +60,7 @@ export async function getSitemap(req, res) {
     // Fetch all active product slugs
     const { data: products, error: prodErr } = await supabase
       .from("products")
-      .select("slug, updated_at")
+      .select("slug, created_at")
       .eq("available", true)
       .order("slug");
 
@@ -79,8 +79,8 @@ export async function getSitemap(req, res) {
         loc: `${BASE_URL}/category/${cat.slug}`,
         changefreq: "weekly",
         priority: "0.8",
-        lastmod: cat.updated_at
-          ? new Date(cat.updated_at).toISOString().split("T")[0]
+        lastmod: cat.created_at
+          ? new Date(cat.created_at).toISOString().split("T")[0]
           : TODAY,
       })
     );
@@ -90,8 +90,8 @@ export async function getSitemap(req, res) {
         loc: `${BASE_URL}/product/${prod.slug}`,
         changefreq: "weekly",
         priority: "0.8",
-        lastmod: prod.updated_at
-          ? new Date(prod.updated_at).toISOString().split("T")[0]
+        lastmod: prod.created_at
+          ? new Date(prod.created_at).toISOString().split("T")[0]
           : TODAY,
       })
     );
