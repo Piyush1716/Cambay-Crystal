@@ -17,6 +17,7 @@ import categoryRoutes from "./routes/categories.routes.js";
 import orderRoutes from "./routes/orders.routes.js";
 import paymentRoutes from "./routes/payments.routes.js";
 import contactRoutes from "./routes/contact.routes.js";
+import sitemapRoutes from "./routes/sitemap.routes.js";
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -34,6 +35,7 @@ app.use("/api/categories", categoryRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/contact", contactRoutes);
+app.use("/api/sitemap", sitemapRoutes);
 
 // ─── Health check ─────────────────────────────────────────────────────────────
 
@@ -74,7 +76,8 @@ if (process.env.NODE_ENV !== "production") {
     console.log("   POST /api/payments/verify");
     console.log("   POST /api/payments/failure");
     console.log("   POST /api/payments/cancel");
-    console.log("   POST /api/contact\n");
+    console.log("   POST /api/contact");
+    console.log("   GET  /api/sitemap\n");
   });
 }
 

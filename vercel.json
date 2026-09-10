@@ -35,6 +35,10 @@
       "destination": "/api/$1"
     },
     {
+      "source": "/sitemap.xml",
+      "destination": "https://gajanan-gems-backend.vercel.app/api/sitemap"
+    },
+    {
       "source": "/((?!api/).*)",
       "destination": "/index.html"
     }
