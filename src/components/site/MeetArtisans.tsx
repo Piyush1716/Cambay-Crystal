@@ -13,7 +13,7 @@ const artisans: readonly Artisan[] = [
     name: "Ramesh Patel",
     specialty: "Gemstone Polishing",
     experience: "18+ years",
-    image: "/images/homepage/agate-polishing.png",
+    image: "/images/homepage/agate-polishing.jpg",
     description:
       "With decades of experience, Ramesh transforms raw stones into lustrous gems using traditional polishing techniques passed down through generations.",
   },
@@ -21,17 +21,17 @@ const artisans: readonly Artisan[] = [
     name: "Suresh Sharma",
     specialty: "Bracelet Crafting",
     experience: "15+ years",
-    image: "/images/homepage/bracelet-crafting.png",
+    image: "/images/homepage/bracelet-crafting.jpg",
     description:
       "Suresh meticulously selects, matches, and strings each bead by hand, ensuring every bracelet has perfect symmetry and energy flow.",
   },
   {
-    name: "Vikram Joshi",
+    name: "Shruti Joshi",
     specialty: "Quality Inspection",
     experience: "12+ years",
-    image: "/images/homepage/quality-inspection.png",
+    image: "/images/homepage/quality-inspection.jpg",
     description:
-      "Vikram examines every finished product under magnification, guaranteeing that only flawless pieces reach our customers.",
+      "Shruti examines every finished product under magnification, guaranteeing that only flawless pieces reach our customers.",
   },
 ] as const;
 
@@ -41,11 +41,10 @@ function ArtisanCard({ artisan, index }: { artisan: Artisan; index: number }) {
   return (
     <div
       ref={ref}
-      className={`group bg-card rounded-2xl overflow-hidden border border-border hover:shadow-xl transition-all duration-300 ease-out will-change-transform ${
-        isVisible
+      className={`group bg-card rounded-2xl overflow-hidden border border-border hover:shadow-xl transition-all duration-300 ease-out will-change-transform ${isVisible
           ? "opacity-100 translate-y-0 scale-100"
           : "opacity-0 translate-y-8 scale-95"
-      }`}
+        }`}
       style={{
         transitionDelay: isVisible ? `${index * 150}ms` : "0ms",
         transitionDuration: "600ms",
@@ -97,11 +96,10 @@ export function MeetArtisans() {
         {/* Section header */}
         <div
           ref={headerRef}
-          className={`text-center mb-8 sm:mb-12 transition-all duration-600 ease-out will-change-transform ${
-            headerVisible
+          className={`text-center mb-8 sm:mb-12 transition-all duration-600 ease-out will-change-transform ${headerVisible
               ? "opacity-100 translate-y-0"
               : "opacity-0 translate-y-6"
-          }`}
+            }`}
         >
           <p className="text-xs sm:text-sm uppercase tracking-[0.3em] text-primary mb-2">
             OUR ARTISANS

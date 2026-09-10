@@ -19,7 +19,7 @@ export function OurCraftsmanship() {
           {/* Left — Image */}
           <div className="group rounded-2xl overflow-hidden shadow-lg mb-6 md:mb-0 aspect-[4/3] md:aspect-auto">
             <img
-              src="/images/homepage/gemologist-inspecting.png"
+              src="/images/homepage/gemologist-inspecting.jpg"
               alt="Gemologist carefully inspecting a gemstone"
               loading="lazy"
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"

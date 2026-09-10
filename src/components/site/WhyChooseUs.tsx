@@ -14,10 +14,10 @@ const features = [
 ] as const;
 
 const images = [
-  { src: "/images/homepage/gemologist-inspecting.png", alt: "Gemologist inspecting a gemstone" },
-  { src: "/images/homepage/bracelet-crafting.png", alt: "Artisan crafting a bracelet" },
-  { src: "/images/homepage/agate-polishing.png", alt: "Agate stone being polished" },
-  { src: "/images/homepage/stone-cutting.png", alt: "Precision stone cutting" },
+  { src: "/images/homepage/gemologist-inspecting.jpg", alt: "Gemologist inspecting a gemstone" },
+  { src: "/images/homepage/bracelet-crafting.jpg", alt: "Artisan crafting a bracelet" },
+  { src: "/images/homepage/agate-polishing.jpg", alt: "Agate stone being polished" },
+  { src: "/images/homepage/stone-cutting.jpg", alt: "Precision stone cutting" },
 ] as const;
 
 function FeatureItem({ text, index }: { text: string; index: number }) {

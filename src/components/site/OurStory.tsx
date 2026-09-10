@@ -26,7 +26,7 @@ export function OurStory() {
             />
             <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-lg">
               <img
-                src="/images/homepage/artisan-workshop.png"
+                src="/images/homepage/artisan-workshop.jpg"
                 alt="Artisan workshop — traditional Indian gemstone craftsmanship"
                 loading="lazy"
                 className="w-full h-full object-cover"

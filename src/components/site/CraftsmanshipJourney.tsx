@@ -22,7 +22,7 @@ const steps: TimelineStep[] = [
   {
     label: "Raw Stone Selection",
     icon: Mountain,
-    image: "/images/homepage/journey-raw-stone.png",
+    image: "/images/homepage/journey-raw-stone.jpg",
     description: "Sourcing the Finest",
     detail:
       "We personally source raw gemstones from trusted mines across India — from the agates of Gujarat to the amethysts of Rajasthan. Each stone is handpicked for its natural color, clarity, and energy.",
@@ -30,7 +30,7 @@ const steps: TimelineStep[] = [
   {
     label: "Precision Cutting",
     icon: Scissors,
-    image: "/images/homepage/journey-cutting.png",
+    image: "/images/homepage/journey-cutting.jpg",
     description: "Shaping with Care",
     detail:
       "Expert lapidaries cut each stone into perfect bead shapes using diamond-tipped tools and water-cooled saws. This step requires years of experience to preserve the stone's natural beauty.",
@@ -38,7 +38,7 @@ const steps: TimelineStep[] = [
   {
     label: "Hand Polishing",
     icon: Sparkles,
-    image: "/images/homepage/journey-polishing.png",
+    image: "/images/homepage/journey-polishing.jpg",
     description: "Revealing the Lustre",
     detail:
       "Every bead is polished by hand on felt wheels using traditional techniques. Multiple polishing stages bring out the stone's natural shine, patterns, and depth of color.",
@@ -46,7 +46,7 @@ const steps: TimelineStep[] = [
   {
     label: "Bead Matching",
     icon: Layers,
-    image: "/images/homepage/journey-matching.png",
+    image: "/images/homepage/journey-matching.jpg",
     description: "Perfectly Paired",
     detail:
       "Our artisans sort and grade thousands of beads by size, color intensity, and pattern. Each bracelet uses beads that complement each other for a harmonious, balanced look.",
@@ -54,7 +54,7 @@ const steps: TimelineStep[] = [
   {
     label: "Bracelet Crafting",
     icon: CircleDot,
-    image: "/images/homepage/journey-bracelet.png",
+    image: "/images/homepage/journey-bracelet.jpg",
     description: "Strung with Intention",
     detail:
       "Beads are carefully threaded onto premium elastic cord with proper tension and spacing. Each bracelet is tied with a secure double knot and tested for durability.",
@@ -62,7 +62,7 @@ const steps: TimelineStep[] = [
   {
     label: "Premium Packaging",
     icon: Package,
-    image: "/images/homepage/journey-packaging.png",
+    image: "/images/homepage/journey-packaging.jpg",
     description: "Wrapped with Love",
     detail:
       "Every piece is placed in a branded gift box with protective cushioning and a certificate of authenticity. We ensure your gemstone arrives in perfect condition.",
@@ -70,7 +70,7 @@ const steps: TimelineStep[] = [
   {
     label: "Delivered to You",
     icon: Truck,
-    image: "/images/homepage/journey-delivered.png",
+    image: "/images/homepage/journey-delivered.jpg",
     description: "At Your Doorstep",
     detail:
       "Shipped securely with tracking and insurance across India. From our workshop to your doorstep, every step is handled with care and attention.",
