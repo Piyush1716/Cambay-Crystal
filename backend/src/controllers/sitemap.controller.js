@@ -49,19 +49,25 @@ export async function getSitemap(req, res) {
     const { data: categories, error: catErr } = await supabase
       .from("categories")
       .select("slug, updated_at")
-      .eq("is_active", true)
+      .eq("available", true)
       .order("slug");
 
-    if (catErr) throw catErr;
+    if (catErr) {
+      console.error("[sitemap] categories query failed:", catErr);
+      throw catErr;
+    }
 
     // Fetch all active product slugs
     const { data: products, error: prodErr } = await supabase
       .from("products")
       .select("slug, updated_at")
-      .eq("is_active", true)
+      .eq("available", true)
       .order("slug");
 
-    if (prodErr) throw prodErr;
+    if (prodErr) {
+      console.error("[sitemap] products query failed:", prodErr);
+      throw prodErr;
+    }
 
     // Build URL entries
     const staticEntries = STATIC_PAGES.map((p) =>
@@ -107,7 +113,7 @@ ${allEntries.join("\n\n")}
     res.setHeader("Cache-Control", "public, max-age=3600, s-maxage=86400, stale-while-revalidate=3600");
     res.status(200).send(xml);
   } catch (err) {
-    console.error("[sitemap] Error generating sitemap:", err);
-    res.status(500).json({ error: "Failed to generate sitemap" });
+    console.error("[sitemap] Error generating sitemap:", err?.message ?? err);
+    res.status(500).json({ error: "Failed to generate sitemap", detail: err?.message });
   }
 }
