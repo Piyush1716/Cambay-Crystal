@@ -10,6 +10,7 @@ export const Route = createFileRoute("/wishlist")({
     meta: [
       { title: "Wishlist — Cambay Crystal" },
       { name: "description", content: "Your saved crystals and gemstone bracelets on Cambay Crystal." },
+      { name: "robots", content: "noindex, nofollow" },
     ],
   }),
   component: WishlistPage,

@@ -13,9 +13,9 @@ export const Route = createFileRoute("/returns-refund-policy")({
           "Cambay Crystal returns and refund policy: eligibility, return shipping, inspection, refund timeframe and non-returnable items.",
       },
       { property: "og:title", content: "Returns & Refund Policy — Cambay Crystal" },
-      { property: "og:url", content: "/returns-refund-policy" },
+      { property: "og:url", content: "https://www.cambaycrystal.shop/returns-refund-policy" },
     ],
-    links: [{ rel: "canonical", href: "/returns-refund-policy" }],
+    links: [{ rel: "canonical", href: "https://www.cambaycrystal.shop/returns-refund-policy" }],
   }),
   component: ReturnsPage,
 });

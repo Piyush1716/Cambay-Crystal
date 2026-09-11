@@ -4,20 +4,22 @@ import { Mail, Phone, MapPin } from "lucide-react";
 import { PageBanner } from "@/components/PageBanner";
 import { ContactForm } from "@/components/ContactForm";
 import { StaticPageLayout } from "@/components/site/StaticPageLayout";
+import { canonical, og, twitter } from "@/lib/seo";
 
 export const Route = createFileRoute("/contact-us")({
-  head: () => ({
-    meta: [
-      { title: "Contact Us — Cambay Crystal" },
-      {
-        name: "description",
-        content: `Get in touch with Cambay Crystal. Email ${CONTACT_EMAIL}, call +91 ${CONTACT_PHONE}, or visit us in Khambhat.`,
-      },
-      { property: "og:title", content: "Contact Us — Cambay Crystal" },
-      { property: "og:url", content: "/contact-us" },
-    ],
-    links: [{ rel: "canonical", href: "/contact-us" }],
-  }),
+  head: () => {
+    const title = "Contact Us — Cambay Crystal | Email, Phone & Showroom";
+    const description = `Reach Cambay Crystal by email ${CONTACT_EMAIL}, phone +91 ${CONTACT_PHONE}, or visit our showroom in Khambhat, Gujarat, India.`;
+    return {
+      meta: [
+        { title },
+        { name: "description", content: description.slice(0, 160) },
+        ...og({ title, description: description.slice(0, 160), url: "/contact-us" }),
+        ...twitter({ title, description: description.slice(0, 160) }),
+      ],
+      links: [canonical("/contact-us")],
+    };
+  },
   component: ContactPage,
 });
 

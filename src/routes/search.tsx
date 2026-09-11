@@ -8,6 +8,7 @@ import { useCart } from "@/lib/cart";
 import { useWishlist } from "@/lib/wishlist";
 import { Search, ShoppingBag, Heart, SlidersHorizontal } from "lucide-react";
 import { z } from "zod";
+import { noindex } from "@/lib/seo";
 
 // ─── Route ────────────────────────────────────────────────────────────────────
 
@@ -17,6 +18,7 @@ export const Route = createFileRoute("/search")({
     meta: [
       { title: match.search.q ? `Search: "${match.search.q}" — Cambay Crystal` : "Search — Cambay Crystal" },
       { name: "description", content: "Search our collection of healing crystals and gemstone jewellery." },
+      ...noindex(),
     ],
   }),
   component: SearchPage,

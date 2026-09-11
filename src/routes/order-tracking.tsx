@@ -17,10 +17,8 @@ export const Route = createFileRoute("/order-tracking")({
         content:
           "Track your Cambay Crystal order. Enter your Order ID and billing email to check your order status.",
       },
-      { property: "og:title", content: "Order Tracking — Cambay Crystal" },
-      { property: "og:url", content: "/order-tracking" },
+      { name: "robots", content: "noindex, nofollow" },
     ],
-    links: [{ rel: "canonical", href: "/order-tracking" }],
   }),
   component: OrderTrackingPage,
 });

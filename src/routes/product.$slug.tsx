@@ -6,23 +6,32 @@ import { Footer } from "@/components/site/Footer";
 import { fetchProductBySlug, fetchProducts, type Product } from "@/lib/products";
 import { useCart } from "@/lib/cart";
 import { useWishlist } from "@/lib/wishlist";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { canonical, og, twitter, productSchema, breadcrumbSchema, SITE_URL } from "@/lib/seo";
 
 export const Route = createFileRoute("/product/$slug")({
   head: ({ loaderData }) => {
     const product = loaderData?.product as Product | undefined;
+    const title = product ? `${product.name} — Cambay Crystal` : "Product — Cambay Crystal";
+    const description = product?.shortDescription
+      ? product.shortDescription.slice(0, 160)
+      : "Shop premium authentic healing crystals, gemstone bracelets, and spiritual decor from Cambay Crystal. Free delivery on all orders!";
+    const path = `/product/${product?.slug ?? ""}`;
     return {
       meta: [
-        { title: product ? `${product.name} — Cambay Crystal` : "Product — Cambay Crystal" },
-        {
-          name: "description",
-          content: product?.shortDescription
-            ? product.shortDescription.slice(0, 160)
-            : "Shop premium authentic healing crystals, gemstone bracelets, and spiritual decor from Cambay Crystal. Free delivery on all orders!",
-        },
-        { property: "og:title", content: product ? `${product.name} — Cambay Crystal` : "Cambay Crystal" },
-        { property: "og:image", content: product?.img ?? "" },
-        { property: "og:type", content: "product" },
+        { title },
+        { name: "description", content: description },
+        ...og({
+          title,
+          description,
+          url: path,
+          image: product?.img,
+          type: "product",
+          ...(product ? { priceCurrency: "INR", priceAmount: product.price } : {}),
+        }),
+        ...twitter({ title, description, image: product?.img }),
       ],
+      links: [canonical(path)],
     };
   },
   loader: async ({ params }) => {
@@ -184,6 +193,28 @@ function ProductPage() {
     <div className="min-h-screen bg-background flex flex-col">
       <Header />
       <main className="flex-1">
+        <JsonLd data={[
+          productSchema({
+            name: product.name,
+            description: product.shortDescription ?? product.description ?? undefined,
+            image: product.img,
+            url: `/product/${product.slug}`,
+            price: product.price,
+            availability: "InStock",
+            ...(product.rating !== undefined && product.reviews
+              ? { rating: product.rating, reviewCount: product.reviews }
+              : {}),
+            categoryName: product.categoryName,
+            categorySlug: product.categorySlug,
+          }),
+          breadcrumbSchema([
+            { name: "Home", url: "/" },
+            ...(product.categoryName && product.categorySlug
+              ? [{ name: product.categoryName, url: `/category/${product.categorySlug}` }]
+              : []),
+            { name: product.name, url: `/product/${product.slug}` },
+          ]),
+        ]} />
         {/* Product section */}
         <section className="max-w-7xl mx-auto px-4 lg:px-6 py-8 lg:py-12 grid lg:grid-cols-2 gap-8 lg:gap-12">
           {/* Left: Gallery */}

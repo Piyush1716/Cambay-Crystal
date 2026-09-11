@@ -1,22 +1,24 @@
-import { CONTACT_EMAIL, CONTACT_PHONE } from "@/config";
+import { CONTACT_EMAIL } from "@/config";
 import { createFileRoute } from "@tanstack/react-router";
 import { PageBanner } from "@/components/PageBanner";
 import { StaticPageLayout } from "@/components/site/StaticPageLayout";
+import { canonical, og, twitter } from "@/lib/seo";
 
 export const Route = createFileRoute("/about-us")({
-  head: () => ({
-    meta: [
-      { title: "About Us — Cambay Crystal" },
-      {
-        name: "description",
-        content:
-          "Learn about Cambay Crystal, rooted in Khambhat — India's agate capital — offering authentic spiritual & holistic healing products since 2010.",
-      },
-      { property: "og:title", content: "About Us — Cambay Crystal" },
-      { property: "og:url", content: "/about-us" },
-    ],
-    links: [{ rel: "canonical", href: "/about-us" }],
-  }),
+  head: () => {
+    const title = "About Us — Cambay Crystal | Khambhat's Authentic Gemstone Store";
+    const description =
+      "Cambay Crystal is rooted in Khambhat — India's agate capital. Authentic healing crystals, gemstones & spiritual products since 2010. Direct from artisans.";
+    return {
+      meta: [
+        { title },
+        { name: "description", content: description },
+        ...og({ title, description, url: "/about-us" }),
+        ...twitter({ title, description }),
+      ],
+      links: [canonical("/about-us")],
+    };
+  },
   component: AboutPage,
 });
 
@@ -25,7 +27,7 @@ function AboutPage() {
     <StaticPageLayout>
       <PageBanner title="About Us" crumb="About Us" />
       <article className="prose-policy mx-auto max-w-3xl px-4 py-12">
-        <h4>What We Do</h4>
+        <h2>What We Do</h2>
         <p>
           Cambay Crystal is a one stop destination for all your affordable Spiritual &amp; Holistic
           Healing requirements. Our extensive product line includes everything from Reiki products,
@@ -34,7 +36,7 @@ function AboutPage() {
           authenticity.
         </p>
 
-        <h4>Rooted in Khambhat — India's Agate Capital</h4>
+        <h2>Rooted in Khambhat — India's Agate Capital</h2>
         <p>
           Cambay Crystal is proudly based in Khambhat, Gujarat the historic heartland of agate and
           gemstone craftsmanship. Khambhat has been the central hub for agate and healing stone
@@ -48,7 +50,7 @@ function AboutPage() {
           prices without any middlemen.
         </p>
 
-        <h4>Our Story</h4>
+        <h2>Our Story</h2>
         <p>
           Cambay Crystal was founded in 2010 with a clear vision: to bring genuine, handcrafted
           healing crystals and spiritual products to customers across India and the world. What
@@ -62,7 +64,7 @@ function AboutPage() {
           authenticity, and affordability.
         </p>
 
-        <h4>About Chunara Mayank</h4>
+        <h2>About Chunara Mayank</h2>
         <p>
           Cambay Crystal is led by <strong>Chunara Mayank</strong>, whose deep roots in Khambhat's
           gemstone industry have shaped the brand from its very beginning. With a hands on
@@ -72,7 +74,7 @@ function AboutPage() {
           highest standards of quality and authenticity.
         </p>
 
-        <h4>Our Showroom &amp; Global Reach</h4>
+        <h2>Our Showroom &amp; Global Reach</h2>
         <p>
           Our showroom is located in Khambhat, Gujarat, where you are welcome to visit, touch,
           and feel our products before making a purchase. Beyond our local presence, we ship
@@ -80,7 +82,7 @@ function AboutPage() {
           the finest of Khambhat's craftsmanship to every corner of the globe.
         </p>
 
-        <h4>How to Make a Purchase</h4>
+        <h2>How to Make a Purchase</h2>
         <p>
           If you are looking for something specific or have a custom requirement, please write to
           us at{" "}

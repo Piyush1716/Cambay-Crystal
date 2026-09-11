@@ -12,6 +12,8 @@ import { useCart } from "@/lib/cart";
 import { useWishlist } from "@/lib/wishlist";
 import { ChevronRight, SlidersHorizontal, ShoppingBag, Heart, X } from "lucide-react";
 import { useState } from "react";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { canonical, og, twitter, breadcrumbSchema, collectionPageSchema } from "@/lib/seo";
 
 export const Route = createFileRoute("/category/$slug")({
   loader: async ({ params }) => {
@@ -23,12 +25,21 @@ export const Route = createFileRoute("/category/$slug")({
     if (!category) throw notFound();
     return { category, allCategories, products };
   },
-  head: ({ loaderData }) => ({
-    meta: [
-      { title: `${loaderData?.category.name ?? "Category"} — Cambay Crystal` },
-      { name: "description", content: loaderData?.category.description ?? "Shop healing crystals and gemstone jewellery." },
-    ],
-  }),
+  head: ({ loaderData }) => {
+    const cat = loaderData?.category;
+    const title = `${cat?.name ?? "Category"} — Cambay Crystal`;
+    const description = cat?.description ?? `Shop ${cat?.name ?? "healing crystals"} at Cambay Crystal. Authentic gemstones from Khambhat, India. Free delivery on all orders.`;
+    const path = `/category/${cat?.slug ?? ""}`;
+    return {
+      meta: [
+        { title },
+        { name: "description", content: description.slice(0, 160) },
+        ...og({ title, description: description.slice(0, 160), url: path, image: cat?.img }),
+        ...twitter({ title, description: description.slice(0, 160), image: cat?.img }),
+      ],
+      links: [canonical(path)],
+    };
+  },
   component: CategoryPage,
   notFoundComponent: () => (
     <div className="min-h-screen flex flex-col">
@@ -66,6 +77,19 @@ function CategoryPage() {
     <div className="min-h-screen bg-background flex flex-col">
       <Header />
       <main className="flex-1">
+        <JsonLd data={[
+          collectionPageSchema({
+            name: category.name,
+            description: category.description,
+            url: `/category/${category.slug}`,
+            image: category.img,
+          }),
+          breadcrumbSchema([
+            { name: "Home", url: "/" },
+            { name: "All Categories", url: "/categories" },
+            { name: category.name, url: `/category/${category.slug}` },
+          ]),
+        ]} />
         {/* Hero banner */}
         <div className="bg-secondary/60 border-b border-border">
           <div className="max-w-7xl mx-auto px-4 lg:px-6 py-8 sm:py-12">

@@ -29,6 +29,7 @@ export const Route = createFileRoute("/checkout")({
     meta: [
       { title: "Checkout — Cambay Crystal" },
       { name: "description", content: "Securely complete your order for healing crystals and gemstone jewellery." },
+      { name: "robots", content: "noindex, nofollow" },
     ],
   }),
   component: CheckoutPage,

@@ -11,10 +11,12 @@ export const Route = createFileRoute("/shipping-policy")({
         content:
           "Cambay Crystal shipping policy: nationwide and global delivery via reputed courier services, shipped within 3-7 working days.",
       },
+      { property: "og:type", content: "website" },
+      { property: "og:site_name", content: "Cambay Crystal" },
       { property: "og:title", content: "Shipping Policy — Cambay Crystal" },
-      { property: "og:url", content: "/shipping-policy" },
+      { property: "og:url", content: "https://www.cambaycrystal.shop/shipping-policy" },
     ],
-    links: [{ rel: "canonical", href: "/shipping-policy" }],
+    links: [{ rel: "canonical", href: "https://www.cambaycrystal.shop/shipping-policy" }],
   }),
   component: ShippingPage,
 });

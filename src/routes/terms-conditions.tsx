@@ -31,10 +31,12 @@ export const Route = createFileRoute("/terms-conditions")({
         content:
           "Read the terms and conditions for using the Cambay Crystal online store, including user eligibility, content ownership and jurisdiction.",
       },
+      { property: "og:type", content: "website" },
+      { property: "og:site_name", content: "Cambay Crystal" },
       { property: "og:title", content: "Terms & Conditions — Cambay Crystal" },
-      { property: "og:url", content: "/terms-conditions" },
+      { property: "og:url", content: "https://www.cambaycrystal.shop/terms-conditions" },
     ],
-    links: [{ rel: "canonical", href: "/terms-conditions" }],
+    links: [{ rel: "canonical", href: "https://www.cambaycrystal.shop/terms-conditions" }],
   }),
   component: TermsPage,
 });

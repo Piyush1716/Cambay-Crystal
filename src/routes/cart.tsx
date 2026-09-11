@@ -5,12 +5,16 @@ import { useCart } from "@/lib/cart";
 import { useAuth } from "@/lib/auth";
 import { Minus, Plus, Trash2, ShoppingBag } from "lucide-react";
 
+import { canonical, noindex } from "@/lib/seo";
+
 export const Route = createFileRoute("/cart")({
   head: () => ({
     meta: [
       { title: "Your Cart — Cambay Crystal" },
       { name: "description", content: "Review the crystals and bracelets in your cart before checkout." },
+      ...noindex(),
     ],
+    links: [canonical("/cart")],
   }),
   component: CartPage,
 });

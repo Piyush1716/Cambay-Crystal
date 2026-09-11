@@ -1,7 +1,8 @@
-import { CONTACT_EMAIL, CONTACT_PHONE } from "@/config";
+import { CONTACT_EMAIL } from "@/config";
 import { createFileRoute } from "@tanstack/react-router";
 import { PageBanner } from "@/components/PageBanner";
 import { StaticPageLayout } from "@/components/site/StaticPageLayout";
+import { canonical, og, twitter } from "@/lib/seo";
 
 const faqs = [
   { q: "Do you offer COD?", a: "Currently, we do not offer Cash on Delivery (COD). Please use our available online payment methods to complete your purchase." },
@@ -36,19 +37,20 @@ const cancellationSteps = [
 ];
 
 export const Route = createFileRoute("/faq")({
-  head: () => ({
-    meta: [
-      { title: "FAQ — Cambay Crystal" },
-      {
-        name: "description",
-        content:
-          "Frequently asked questions about Cambay Crystal: COD, order confirmation, packaging, payment security, delivery times and order cancellation.",
-      },
-      { property: "og:title", content: "Frequently Asked Questions — Cambay Crystal" },
-      { property: "og:url", content: "/faq" },
-    ],
-    links: [{ rel: "canonical", href: "/faq" }],
-  }),
+  head: () => {
+    const title = "FAQ — Cambay Crystal | Shipping, Payments & Returns";
+    const description =
+      "Frequently asked questions about Cambay Crystal: delivery times, order confirmation, packaging, payment security and order cancellation.";
+    return {
+      meta: [
+        { title },
+        { name: "description", content: description },
+        ...og({ title, description, url: "/faq" }),
+        ...twitter({ title, description }),
+      ],
+      links: [canonical("/faq")],
+    };
+  },
   component: FaqPage,
 });
 
@@ -60,14 +62,14 @@ function FaqPage() {
         <div className="space-y-5">
           {faqs.map((f, i) => (
             <div key={i} className="rounded-2xl border border-border bg-card p-6">
-              <h3 className="font-semibold text-foreground">
+              <h2 className="font-semibold text-foreground text-base">
                 Q{i + 1}. {f.q}
-              </h3>
+              </h2>
               <p className="mt-2 text-muted-foreground">{f.a}</p>
             </div>
           ))}
           <div className="rounded-2xl border border-border bg-card p-6">
-            <h3 className="font-semibold text-foreground">Q7. Order Cancellation</h3>
+            <h2 className="font-semibold text-foreground text-base">Q7. Order Cancellation</h2>
             <ol className="prose-policy mt-2">
               {cancellationSteps.map((s, i) => (
                 <li key={i}>{s}</li>

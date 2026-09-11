@@ -1,22 +1,24 @@
-import { CONTACT_EMAIL, CONTACT_PHONE } from "@/config";
+import { CONTACT_EMAIL } from "@/config";
 import { createFileRoute } from "@tanstack/react-router";
 import { PageBanner } from "@/components/PageBanner";
 import { StaticPageLayout } from "@/components/site/StaticPageLayout";
+import { canonical, og, twitter } from "@/lib/seo";
 
 export const Route = createFileRoute("/privacy-policy")({
-  head: () => ({
-    meta: [
-      { title: "Privacy Policy — Cambay Crystal" },
-      {
-        name: "description",
-        content:
-          "How Cambay Crystal collects, uses, shares and protects your personal information when you use our website.",
-      },
-      { property: "og:title", content: "Privacy Policy — Cambay Crystal" },
-      { property: "og:url", content: "/privacy-policy" },
-    ],
-    links: [{ rel: "canonical", href: "/privacy-policy" }],
-  }),
+  head: () => {
+    const title = "Privacy Policy — Cambay Crystal";
+    const description =
+      "How Cambay Crystal collects, uses, shares and protects your personal information when you use our website or make a purchase.";
+    return {
+      meta: [
+        { title },
+        { name: "description", content: description },
+        ...og({ title, description, url: "/privacy-policy" }),
+        ...twitter({ title, description }),
+      ],
+      links: [canonical("/privacy-policy")],
+    };
+  },
   component: PrivacyPage,
 });
 
@@ -36,7 +38,7 @@ function PrivacyPage() {
           you agree to be bound by the terms of this Privacy Policy. If you do not agree, please do
           not use or access our website.
         </p>
-        <h4>Collection of Information</h4>
+        <h2>Collection of Information</h2>
         <p>
           When you use our website, we collect and store the personal information you provide from
           time to time. Our primary goal is to provide you a safe, efficient, smooth and customized
@@ -52,7 +54,7 @@ function PrivacyPage() {
           information is stored by your device or with the payment gateway, over which we have no
           access or control.
         </p>
-        <h4>Use of Your Information</h4>
+        <h2>Use of Your Information</h2>
         <p>
           We use personal information to provide services at the request of customers, resolve
           disputes, troubleshoot problems, promote a safe service, measure consumer interest, inform
@@ -60,15 +62,15 @@ function PrivacyPage() {
           and other criminal activity. To the extent we use your personal information to market to
           you, we provide the ability to opt out.
         </p>
-        <h4>Cookies</h4>
+        <h2>Cookies</h2>
         <p>
-          We use data collection devices such as "cookies" on certain pages of the website to help
+          We use data collection devices such as &quot;cookies&quot; on certain pages of the website to help
           analyse our web page flow, measure promotional effectiveness, and promote trust and
-          safety. Most cookies are "session cookies", automatically deleted at the end of a session.
+          safety. Most cookies are &quot;session cookies&quot;, automatically deleted at the end of a session.
           You are free to decline cookies if your browser permits, though some features may not be
           available.
         </p>
-        <h4>Sharing of Personal Information</h4>
+        <h2>Sharing of Personal Information</h2>
         <p>
           We may share personal information with our corporate entities and affiliates. We may
           disclose personal information to third parties when required to provide our services,
@@ -76,26 +78,27 @@ function PrivacyPage() {
           disclose information if required by law or in good faith belief that disclosure is
           reasonably necessary.
         </p>
-        <h4>Links to Other Sites</h4>
+        <h2>Links to Other Sites</h2>
         <p>
           Our website links to other websites that may collect personally identifiable information
           about you. Cambay Crystal is not responsible for the privacy practices or content of those
           linked websites.
         </p>
-        <h4>Security Precautions</h4>
+        <h2>Security Precautions</h2>
         <p>
           Our website has stringent security measures in place to protect against the loss, misuse
           and alteration of information under our control, including the use of firewalls,
           encryption and data leakage prevention technologies, vendor audits, and continuous
           monitoring of our physical and technical environment.
         </p>
-        <h4>Choice / Opt-Out</h4>
+        <h2>Choice / Opt-Out</h2>
         <p>
           We provide all users the opportunity to opt out of receiving non-essential (promotional,
-          marketing-related) communications. To remove your contact information from all Cambay Crystal
-          lists and newsletters, please email us at hello@Cambay Crystal.com.
+          marketing-related) communications. To remove your contact information from all Cambay
+          Crystal lists and newsletters, please email us at{" "}
+          <a href={`mailto:${CONTACT_EMAIL}`} className="text-primary underline">{CONTACT_EMAIL}</a>.
         </p>
-        <h4>Your Consent</h4>
+        <h2>Your Consent</h2>
         <p>
           By using the website and/or providing your information, you consent to the collection and
           use of the information you disclose in accordance with this Privacy Policy. If we decide to

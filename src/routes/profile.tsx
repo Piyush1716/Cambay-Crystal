@@ -28,6 +28,7 @@ export const Route = createFileRoute("/profile")({
     meta: [
       { title: "My Account — Cambay Crystal" },
       { name: "description", content: "View your profile and order history." },
+      { name: "robots", content: "noindex, nofollow" },
     ],
   }),
   component: ProfilePage,

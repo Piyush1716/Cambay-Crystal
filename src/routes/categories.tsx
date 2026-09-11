@@ -3,14 +3,22 @@ import { useEffect, useState } from "react";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { fetchAllCategories, type Category } from "@/lib/products";
+import { canonical, og, twitter } from "@/lib/seo";
 
 export const Route = createFileRoute("/categories")({
-  head: () => ({
-    meta: [
-      { title: "All Categories — Cambay Crystal" },
-      { name: "description", content: "Browse all our healing crystal and gemstone categories." },
-    ],
-  }),
+  head: () => {
+    const title = "All Crystal & Gemstone Categories — Cambay Crystal";
+    const description = "Browse all healing crystal & gemstone jewellery categories at Cambay Crystal. Bracelets, trees, pyramids, malas, spheres & more. Free delivery on all orders.";
+    return {
+      meta: [
+        { title },
+        { name: "description", content: description },
+        ...og({ title, description, url: "/categories" }),
+        ...twitter({ title, description }),
+      ],
+      links: [canonical("/categories")],
+    };
+  },
   component: CategoriesPage,
 });
 

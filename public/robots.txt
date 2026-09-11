@@ -1,12 +1,15 @@
 User-agent: *
 
-# Block transactional/private pages from being indexed
+# Block transactional / private pages
 Disallow: /checkout
 Disallow: /order-confirmation
 Disallow: /order-tracking
 Disallow: /cart
+Disallow: /profile
+Disallow: /wishlist
+Disallow: /search
 
 # Allow all public pages
 Allow: /
 
-Sitemap: https://gajanangems.com/sitemap.xml
+Sitemap: https://www.cambaycrystal.shop/sitemap.xml

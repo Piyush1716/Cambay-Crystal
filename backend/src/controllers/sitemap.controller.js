@@ -20,7 +20,6 @@ const STATIC_PAGES = [
   { path: "/customized-bracelet", changefreq: "monthly", priority: "0.8" },
   { path: "/hand-analysis",       changefreq: "monthly", priority: "0.8" },
   { path: "/bulk-order",          changefreq: "monthly", priority: "0.7" },
-  { path: "/search",              changefreq: "weekly",  priority: "0.7" },
   { path: "/about-us",            changefreq: "monthly", priority: "0.6" },
   { path: "/contact-us",          changefreq: "monthly", priority: "0.6" },
   { path: "/faq",                 changefreq: "monthly", priority: "0.6" },
@@ -70,8 +69,9 @@ export async function getSitemap(req, res) {
     }
 
     // Build URL entries
+    // Static pages — omit lastmod (they rarely change; avoid false "updated today" signal)
     const staticEntries = STATIC_PAGES.map((p) =>
-      urlEntry({ loc: `${BASE_URL}${p.path}`, ...p })
+      `  <url>\n    <loc>${BASE_URL}${p.path}</loc>\n    <changefreq>${p.changefreq}</changefreq>\n    <priority>${p.priority}</priority>\n  </url>`
     );
 
     const categoryEntries = (categories || []).map((cat) =>
