@@ -8,6 +8,7 @@
     "dev:api": "node --watch backend/src/index.js",
     "dev:backend": "cd backend && npm run dev",
     "build": "vite build",
+    "postbuild": "node scripts/prerender.mjs",
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
     "lint": "eslint .",
