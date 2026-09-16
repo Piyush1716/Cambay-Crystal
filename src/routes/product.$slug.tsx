@@ -176,7 +176,7 @@ function ProductPage() {
   const { product, related } = Route.useLoaderData() as { product: Product; related: Product[] };
   const [size, setSize] = useState<string | undefined>(product.sizes?.[2]);
   const [qty, setQty] = useState(1);
-  const [tab, setTab] = useState<"desc" | "info" | "reviews">("desc");
+  const [tab, setTab] = useState<"desc" | "reviews">("desc");
   const { add } = useCart();
   const { toggle: wishlistToggle, has: wishlistHas } = useWishlist();
   const navigate = useNavigate();
@@ -355,7 +355,6 @@ function ProductPage() {
           <div className="border-b border-border flex gap-6 overflow-x-auto">
             {[
               { id: "desc", label: "Description" },
-              { id: "info", label: "Additional Information" },
               { id: "reviews", label: `Reviews (${product.reviews ?? 0})` },
             ].map((t) => (
               <button
@@ -382,15 +381,6 @@ function ProductPage() {
                   <p>{product.description ?? "No description available."}</p>
                 )}
               </div>
-            )}
-            {tab === "info" && (
-              <table className="w-full text-sm">
-                <tbody className="divide-y divide-border">
-                  {product.sizes && <tr><td className="py-3 font-medium w-40">Beads Size (mm)</td><td>{product.sizes.join(", ")}</td></tr>}
-                  {product.stone && <tr><td className="py-3 font-medium">Stone</td><td>{product.stone}</td></tr>}
-                  <tr><td className="py-3 font-medium">Added</td><td>{new Date(product.created_at).toLocaleDateString("en-IN", { year: "numeric", month: "long", day: "numeric" })}</td></tr>
-                </tbody>
-              </table>
             )}
             {tab === "reviews" && (
               <div className="space-y-4">
