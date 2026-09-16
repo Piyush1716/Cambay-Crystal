@@ -18,12 +18,12 @@ const artisans: readonly Artisan[] = [
       "With decades of experience, Ramesh transforms raw stones into lustrous gems using traditional polishing techniques passed down through generations.",
   },
   {
-    name: "Suresh Sharma",
+    name: "Smita Sharma",
     specialty: "Bracelet Crafting",
     experience: "15+ years",
     image: "/images/homepage/bracelet-crafting.jpg",
     description:
-      "Suresh meticulously selects, matches, and strings each bead by hand, ensuring every bracelet has perfect symmetry and energy flow.",
+      "Smita meticulously selects, matches, and strings each bead by hand, ensuring every bracelet has perfect symmetry and energy flow.",
   },
   {
     name: "Shruti Joshi",
@@ -42,8 +42,8 @@ function ArtisanCard({ artisan, index }: { artisan: Artisan; index: number }) {
     <div
       ref={ref}
       className={`group bg-card rounded-2xl overflow-hidden border border-border hover:shadow-xl transition-all duration-300 ease-out will-change-transform ${isVisible
-          ? "opacity-100 translate-y-0 scale-100"
-          : "opacity-0 translate-y-8 scale-95"
+        ? "opacity-100 translate-y-0 scale-100"
+        : "opacity-0 translate-y-8 scale-95"
         }`}
       style={{
         transitionDelay: isVisible ? `${index * 150}ms` : "0ms",
@@ -97,8 +97,8 @@ export function MeetArtisans() {
         <div
           ref={headerRef}
           className={`text-center mb-8 sm:mb-12 transition-all duration-600 ease-out will-change-transform ${headerVisible
-              ? "opacity-100 translate-y-0"
-              : "opacity-0 translate-y-6"
+            ? "opacity-100 translate-y-0"
+            : "opacity-0 translate-y-6"
             }`}
         >
           <p className="text-xs sm:text-sm uppercase tracking-[0.3em] text-primary mb-2">

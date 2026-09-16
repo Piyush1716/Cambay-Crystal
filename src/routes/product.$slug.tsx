@@ -352,7 +352,7 @@ function ProductPage() {
 
         {/* Tabs */}
         <section className="max-w-7xl mx-auto px-4 lg:px-6 pb-12">
-          <div className="border-b border-border flex gap-6 overflow-x-auto">
+          <div className="border-b border-border flex gap-6">
             {[
               { id: "desc", label: "Description" },
               { id: "reviews", label: `Reviews (${product.reviews ?? 0})` },
