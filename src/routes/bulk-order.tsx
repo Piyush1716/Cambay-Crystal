@@ -2,20 +2,20 @@ import { createFileRoute } from "@tanstack/react-router";
 import { PageBanner } from "@/components/PageBanner";
 import { ContactForm } from "@/components/ContactForm";
 import { StaticPageLayout } from "@/components/site/StaticPageLayout";
+import { canonical, og, twitter } from "@/lib/seo";
+
+const TITLE = "Bulk Order — Cambay Crystal";
+const DESC = "Cambay Crystal accepts bulk orders for wholesalers, retailers and businesses, with customization options for branding and packaging.";
 
 export const Route = createFileRoute("/bulk-order")({
   head: () => ({
     meta: [
-      { title: "Bulk Order — Cambay Crystal" },
-      {
-        name: "description",
-        content:
-          "Cambay Crystal accepts bulk orders for wholesalers, retailers and businesses, with customization options for branding and packaging.",
-      },
-      { property: "og:title", content: "Bulk Order — Cambay Crystal" },
-      { property: "og:url", content: "/bulk-order" },
+      { title: TITLE },
+      { name: "description", content: DESC },
+      ...og({ title: TITLE, description: DESC, url: "/bulk-order" }),
+      ...twitter({ title: TITLE, description: DESC }),
     ],
-    links: [{ rel: "canonical", href: "/bulk-order" }],
+    links: [canonical("/bulk-order")],
   }),
   component: BulkOrderPage,
 });

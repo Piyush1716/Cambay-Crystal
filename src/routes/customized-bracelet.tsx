@@ -3,6 +3,7 @@ import { Sparkles } from "lucide-react";
 import { PageBanner } from "@/components/PageBanner";
 import { ContactForm } from "@/components/ContactForm";
 import { StaticPageLayout } from "@/components/site/StaticPageLayout";
+import { canonical, og, twitter } from "@/lib/seo";
 
 const highlights = [
   "Create Your Own Crystal Bracelet Online",
@@ -46,19 +47,18 @@ const faqs = [
   },
 ];
 
+const TITLE = "Create Your Own Customized Crystal Bracelet — Cambay Crystal";
+const DESC = "Design your own customized crystal bracelet online in India. Choose natural crystal beads, bead size and wrist size — handmade authentic healing bracelets.";
+
 export const Route = createFileRoute("/customized-bracelet")({
   head: () => ({
     meta: [
-      { title: "Create Your Own Customized Crystal Bracelet — Cambay Crystal" },
-      {
-        name: "description",
-        content:
-          "Design your own customized crystal bracelet online in India. Choose natural crystal beads, bead size and wrist size — handmade authentic healing bracelets.",
-      },
-      { property: "og:title", content: "Customized Crystal Bracelet — Cambay Crystal" },
-      { property: "og:url", content: "/customized-bracelet" },
+      { title: TITLE },
+      { name: "description", content: DESC },
+      ...og({ title: TITLE, description: DESC, url: "/customized-bracelet" }),
+      ...twitter({ title: TITLE, description: DESC }),
     ],
-    links: [{ rel: "canonical", href: "/customized-bracelet" }],
+    links: [canonical("/customized-bracelet")],
   }),
   component: CustomBraceletPage,
 });

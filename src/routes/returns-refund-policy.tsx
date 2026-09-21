@@ -2,20 +2,20 @@ import { CONTACT_EMAIL, CONTACT_PHONE } from "@/config";
 import { createFileRoute } from "@tanstack/react-router";
 import { PageBanner } from "@/components/PageBanner";
 import { StaticPageLayout } from "@/components/site/StaticPageLayout";
+import { canonical, og, twitter } from "@/lib/seo";
+
+const TITLE = "Returns & Refund Policy — Cambay Crystal";
+const DESC = "Cambay Crystal returns and refund policy: eligibility, return shipping, inspection, refund timeframe and non-returnable items.";
 
 export const Route = createFileRoute("/returns-refund-policy")({
   head: () => ({
     meta: [
-      { title: "Returns & Refund Policy — Cambay Crystal" },
-      {
-        name: "description",
-        content:
-          "Cambay Crystal returns and refund policy: eligibility, return shipping, inspection, refund timeframe and non-returnable items.",
-      },
-      { property: "og:title", content: "Returns & Refund Policy — Cambay Crystal" },
-      { property: "og:url", content: "https://www.cambaycrystal.shop/returns-refund-policy" },
+      { title: TITLE },
+      { name: "description", content: DESC },
+      ...og({ title: TITLE, description: DESC, url: "/returns-refund-policy" }),
+      ...twitter({ title: TITLE, description: DESC }),
     ],
-    links: [{ rel: "canonical", href: "https://www.cambaycrystal.shop/returns-refund-policy" }],
+    links: [canonical("/returns-refund-policy")],
   }),
   component: ReturnsPage,
 });

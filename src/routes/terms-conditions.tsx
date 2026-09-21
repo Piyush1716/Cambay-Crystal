@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PageBanner } from "@/components/PageBanner";
 import { StaticPageLayout } from "@/components/site/StaticPageLayout";
+import { canonical, og, twitter } from "@/lib/seo";
 
 const terms = [
   "That you are a competent user who is eligible to enter into the contract as per the Indian Contract Act.",
@@ -22,21 +23,18 @@ const terms = [
   "That you have read and understood these terms and conditions before placing an order at Cambay Crystal.",
 ];
 
+const TITLE = "Terms & Conditions — Cambay Crystal";
+const DESC = "Read the terms and conditions for using the Cambay Crystal online store, including user eligibility, content ownership and jurisdiction.";
+
 export const Route = createFileRoute("/terms-conditions")({
   head: () => ({
     meta: [
-      { title: "Terms & Conditions — Cambay Crystal" },
-      {
-        name: "description",
-        content:
-          "Read the terms and conditions for using the Cambay Crystal online store, including user eligibility, content ownership and jurisdiction.",
-      },
-      { property: "og:type", content: "website" },
-      { property: "og:site_name", content: "Cambay Crystal" },
-      { property: "og:title", content: "Terms & Conditions — Cambay Crystal" },
-      { property: "og:url", content: "https://www.cambaycrystal.shop/terms-conditions" },
+      { title: TITLE },
+      { name: "description", content: DESC },
+      ...og({ title: TITLE, description: DESC, url: "/terms-conditions" }),
+      ...twitter({ title: TITLE, description: DESC }),
     ],
-    links: [{ rel: "canonical", href: "https://www.cambaycrystal.shop/terms-conditions" }],
+    links: [canonical("/terms-conditions")],
   }),
   component: TermsPage,
 });

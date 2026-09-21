@@ -8,6 +8,7 @@ Disallow: /cart
 Disallow: /profile
 Disallow: /wishlist
 Disallow: /search
+Disallow: /api/
 
 # Allow all public pages
 Allow: /

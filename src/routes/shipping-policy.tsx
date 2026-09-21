@@ -1,22 +1,20 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PageBanner } from "@/components/PageBanner";
 import { StaticPageLayout } from "@/components/site/StaticPageLayout";
+import { canonical, og, twitter } from "@/lib/seo";
+
+const TITLE = "Shipping Policy — Cambay Crystal";
+const DESC = "Cambay Crystal shipping policy: nationwide and global delivery via reputed courier services, shipped within 3-7 working days.";
 
 export const Route = createFileRoute("/shipping-policy")({
   head: () => ({
     meta: [
-      { title: "Shipping Policy — Cambay Crystal" },
-      {
-        name: "description",
-        content:
-          "Cambay Crystal shipping policy: nationwide and global delivery via reputed courier services, shipped within 3-7 working days.",
-      },
-      { property: "og:type", content: "website" },
-      { property: "og:site_name", content: "Cambay Crystal" },
-      { property: "og:title", content: "Shipping Policy — Cambay Crystal" },
-      { property: "og:url", content: "https://www.cambaycrystal.shop/shipping-policy" },
+      { title: TITLE },
+      { name: "description", content: DESC },
+      ...og({ title: TITLE, description: DESC, url: "/shipping-policy" }),
+      ...twitter({ title: TITLE, description: DESC }),
     ],
-    links: [{ rel: "canonical", href: "https://www.cambaycrystal.shop/shipping-policy" }],
+    links: [canonical("/shipping-policy")],
   }),
   component: ShippingPage,
 });

@@ -27,8 +27,24 @@ export const Route = createFileRoute("/hand-analysis")({
         content:
           "Upload a photo of your palm and receive a personalised energy reading, chakra insight and gemstone recommendations.",
       },
+      { property: "og:type", content: "website" },
+      { property: "og:site_name", content: "Cambay Crystal" },
+      { property: "og:title", content: "Palm & Aura Analysis — Cambay Crystal" },
+      {
+        property: "og:description",
+        content: "Upload a photo of your palm and receive a personalised energy reading, chakra insight and gemstone recommendations.",
+      },
+      { property: "og:url", content: "https://www.cambaycrystal.shop/hand-analysis" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Palm & Aura Analysis — Cambay Crystal" },
+      {
+        name: "twitter:description",
+        content: "Upload a photo of your palm and receive a personalised energy reading, chakra insight and gemstone recommendations.",
+      },
     ],
+    links: [{ rel: "canonical", href: "https://www.cambaycrystal.shop/hand-analysis" }],
   }),
+
   loader: async () => {
     const products = await fetchProducts();
     return { products };
