@@ -44,9 +44,9 @@ function urlEntry({ loc, changefreq, priority, lastmod = TODAY }) {
   </url>`;
 }
 
-/** Pick the best available date for lastmod (updated_at > created_at > TODAY) */
+/** Return created_at as YYYY-MM-DD for lastmod (updated_at is not in schema) */
 function bestDate(row) {
-  const raw = row.updated_at || row.created_at;
+  const raw = row.created_at;
   if (!raw) return TODAY;
   return new Date(raw).toISOString().split("T")[0];
 }
@@ -58,7 +58,7 @@ export async function getSitemap(req, res) {
     // Fetch all active category slugs + timestamps
     const { data: categories, error: catErr } = await supabase
       .from("categories")
-      .select("slug, created_at, updated_at")
+      .select("slug, created_at")
       .eq("available", true)
       .order("slug");
 
@@ -70,7 +70,7 @@ export async function getSitemap(req, res) {
     // Fetch all active product slugs + timestamps
     const { data: products, error: prodErr } = await supabase
       .from("products")
-      .select("slug, created_at, updated_at")
+      .select("slug, created_at")
       .eq("available", true)
       .order("slug");
 
