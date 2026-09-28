@@ -1,4 +1,4 @@
-﻿/**
+/**
  * scripts/prerender.mjs
  *
  * Post-build static prerender script for Cambay Crystal.
@@ -34,7 +34,10 @@ const DEFAULT_DESC =
 function escAttr(str) {
   return String(str)
     .replace(/&/g, "&amp;")
-    .replace(/"/g, "&quot;");
+    .replace(/"/g, "&quot;")
+    .replace(/\u2014/g, "&#8212;")   // em-dash — safe in all encodings
+    .replace(/\u2013/g, "&#8211;")   // en-dash
+    .replace(/\u2019/g, "&#8217;");  // right single quote '
 }
 
 /** Inject SEO tags into the index.html template and return the result. */
@@ -85,9 +88,11 @@ function writeRoute(urlPath, html) {
   const rel = urlPath === "/" ? "" : urlPath.replace(/^\//, "");
   const dir = path.join(DIST, rel);
   fs.mkdirSync(dir, { recursive: true });
-  fs.writeFileSync(path.join(dir, "index.html"), html, "utf8");
+  // Explicitly write as UTF-8 to prevent em-dash/special char corruption
+  fs.writeFileSync(path.join(dir, "index.html"), html, { encoding: "utf8" });
   console.log(`  OK  ${urlPath}`);
 }
+
 
 /** Fetch JSON from the production API; returns null on failure (non-fatal). */
 async function apiFetch(apiPath) {
