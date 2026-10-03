@@ -122,7 +122,7 @@ export function CustomerReviews({
               Write a review
             </button>
             <Link
-              to="/contact"
+              to="/contact-us"
               className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground text-sm font-medium transition-all active:scale-[0.98]"
             >
               <HelpCircle className="w-4 h-4" />
@@ -274,7 +274,7 @@ export function CustomerReviews({
           </div>
           <div className="pt-2">
             <Link
-              to="/contact"
+              to="/contact-us"
               className="inline-block px-7 py-2.5 rounded-full bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition shadow-sm"
             >
               Contact Support

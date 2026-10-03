@@ -22,6 +22,7 @@ import { Route as HandAnalysisRouteImport } from './routes/hand-analysis'
 import { Route as FaqRouteImport } from './routes/faq'
 import { Route as CustomizedBraceletRouteImport } from './routes/customized-bracelet'
 import { Route as ContactUsRouteImport } from './routes/contact-us'
+import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as CategoriesRouteImport } from './routes/categories'
 import { Route as CartRouteImport } from './routes/cart'
@@ -96,6 +97,11 @@ const ContactUsRoute = ContactUsRouteImport.update({
   path: '/contact-us',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CheckoutRoute = CheckoutRouteImport.update({
   id: '/checkout',
   path: '/checkout',
@@ -144,6 +150,7 @@ export interface FileRoutesByFullPath {
   '/cart': typeof CartRoute
   '/categories': typeof CategoriesRoute
   '/checkout': typeof CheckoutRoute
+  '/contact': typeof ContactRoute
   '/contact-us': typeof ContactUsRoute
   '/customized-bracelet': typeof CustomizedBraceletRoute
   '/faq': typeof FaqRoute
@@ -167,6 +174,7 @@ export interface FileRoutesByTo {
   '/cart': typeof CartRoute
   '/categories': typeof CategoriesRoute
   '/checkout': typeof CheckoutRoute
+  '/contact': typeof ContactRoute
   '/contact-us': typeof ContactUsRoute
   '/customized-bracelet': typeof CustomizedBraceletRoute
   '/faq': typeof FaqRoute
@@ -191,6 +199,7 @@ export interface FileRoutesById {
   '/cart': typeof CartRoute
   '/categories': typeof CategoriesRoute
   '/checkout': typeof CheckoutRoute
+  '/contact': typeof ContactRoute
   '/contact-us': typeof ContactUsRoute
   '/customized-bracelet': typeof CustomizedBraceletRoute
   '/faq': typeof FaqRoute
@@ -216,6 +225,7 @@ export interface FileRouteTypes {
     | '/cart'
     | '/categories'
     | '/checkout'
+    | '/contact'
     | '/contact-us'
     | '/customized-bracelet'
     | '/faq'
@@ -239,6 +249,7 @@ export interface FileRouteTypes {
     | '/cart'
     | '/categories'
     | '/checkout'
+    | '/contact'
     | '/contact-us'
     | '/customized-bracelet'
     | '/faq'
@@ -262,6 +273,7 @@ export interface FileRouteTypes {
     | '/cart'
     | '/categories'
     | '/checkout'
+    | '/contact'
     | '/contact-us'
     | '/customized-bracelet'
     | '/faq'
@@ -286,6 +298,7 @@ export interface RootRouteChildren {
   CartRoute: typeof CartRoute
   CategoriesRoute: typeof CategoriesRoute
   CheckoutRoute: typeof CheckoutRoute
+  ContactRoute: typeof ContactRoute
   ContactUsRoute: typeof ContactUsRoute
   CustomizedBraceletRoute: typeof CustomizedBraceletRoute
   FaqRoute: typeof FaqRoute
@@ -396,6 +409,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContactUsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/checkout': {
       id: '/checkout'
       path: '/checkout'
@@ -462,6 +482,7 @@ const rootRouteChildren: RootRouteChildren = {
   CartRoute: CartRoute,
   CategoriesRoute: CategoriesRoute,
   CheckoutRoute: CheckoutRoute,
+  ContactRoute: ContactRoute,
   ContactUsRoute: ContactUsRoute,
   CustomizedBraceletRoute: CustomizedBraceletRoute,
   FaqRoute: FaqRoute,
