@@ -251,13 +251,7 @@
 @media (min-width: 768px) {
   .hero-slider-container {
     aspect-ratio: auto;
-    height: 520px;
-  }
-}
-
-@media (min-width: 1024px) {
-  .hero-slider-container {
-    height: 600px;
+    height: clamp(340px, 33vw, 460px);
   }
 }
 

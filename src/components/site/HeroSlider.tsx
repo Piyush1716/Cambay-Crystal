@@ -3,25 +3,41 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
 
 // Desktop Landscape Images (Laptops & Desktops >= 768px)
-import pendantsDesktop from "@/assets/hero-pendants.jpg";
-import crystalsDesktop from "@/assets/hero-crystals.jpg";
+import braceletsLaptop from "@/assets/hero-bracelets-laptop.webp";
+import angelsLaptop from "@/assets/hero-angels-laptop.webp";
+import geodesLaptop from "@/assets/hero-geodes-laptop.webp";
+import pyramidsLaptop from "@/assets/hero-pyramids-laptop.webp";
 
 // Mobile Squarish Images (Phone screens < 768px)
-import pendantsMobile from "@/assets/hero-pendants-mobile.webp";
-import crystalsMobile from "@/assets/hero-crystals-mobile.webp";
+import braceletsMobile from "@/assets/hero-bracelets-mobile.webp";
+import angelsMobile from "@/assets/hero-angels-mobile.webp";
+import geodesMobile from "@/assets/hero-geodes-mobile.webp";
+import pyramidsMobile from "@/assets/hero-pyramids-mobile.webp";
 
 const slides = [
   {
-    desktopImg: pendantsDesktop,
-    mobileImg: pendantsMobile,
-    title: "Crystal Pendants",
+    desktopImg: braceletsLaptop,
+    mobileImg: braceletsMobile,
+    title: "Crystal Bracelets",
     link: "/category/crystal-bracelets",
   },
   {
-    desktopImg: crystalsDesktop,
-    mobileImg: crystalsMobile,
-    title: "Healing Crystals",
-    link: "/category/crystal-mala",
+    desktopImg: angelsLaptop,
+    mobileImg: angelsMobile,
+    title: "Crystal Angels",
+    link: "/category/angels",
+  },
+  {
+    desktopImg: geodesLaptop,
+    mobileImg: geodesMobile,
+    title: "Clusters & Geodes",
+    link: "/category/geodes",
+  },
+  {
+    desktopImg: pyramidsLaptop,
+    mobileImg: pyramidsMobile,
+    title: "Crystal Pyramids",
+    link: "/category/pyramid",
   },
 ];
 
@@ -64,11 +80,11 @@ export function HeroSlider() {
 
   return (
     <section
-      className="group relative w-full overflow-hidden select-none bg-white"
+      className="group relative w-full overflow-hidden select-none bg-[#F7F4EE]"
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
-      <div className="hero-slider-container relative overflow-hidden bg-white">
+      <div className="hero-slider-container relative overflow-hidden bg-[#F7F4EE]">
         {slides.map((s, idx) => (
           <div
             key={idx}
