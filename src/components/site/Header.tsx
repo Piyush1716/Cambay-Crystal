@@ -11,7 +11,6 @@ const nav = [
   { label: "Shop", to: "/" },
   { label: "Palm Analysis", to: "/hand-analysis" },
   { label: "Track Order", to: "/order-tracking" },
-  { label: "About Us", to: "/about-us" },
   { label: "Categories", to: "/categories" }
 ];
 
