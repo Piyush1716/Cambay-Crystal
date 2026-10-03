@@ -62,13 +62,15 @@ export async function checkEligibility(req, res, next) {
       });
     }
 
-    // Check if user has confirmed order containing this product
+    const VALID_PURCHASE_STATUSES = ["confirmed", "processing", "shipped", "delivered"];
+
+    // Check if user has confirmed/delivered order containing this product
     const { data: orderItems, error: orderError } = await supabase
       .from("order_items")
       .select("id, orders!inner(user_id, status)")
       .eq("product_id", productId)
       .eq("orders.user_id", user.id)
-      .eq("orders.status", "confirmed")
+      .in("orders.status", VALID_PURCHASE_STATUSES)
       .limit(1);
 
     if (orderError) {
@@ -106,10 +108,15 @@ export async function getReviews(req, res, next) {
       return res.status(400).json({ error: "Invalid productId" });
     }
 
-    // Check if reviews table exists; return empty fallback gracefully if not created yet
+    // When onlyPictures is true, perform an inner join on review_images so PostgREST
+    // filters at the database level and returns accurate pagination and count
+    const selectStr = onlyPictures
+      ? "*, review_images!inner(id, image_url, sort_order)"
+      : "*, review_images(id, image_url, sort_order)";
+
     let reviewsQuery = supabase
       .from("reviews")
-      .select("*, review_images(id, image_url, sort_order)", { count: "exact" })
+      .select(selectStr, { count: "exact" })
       .eq("product_id", productId)
       .order("created_at", { ascending: false });
 
@@ -138,21 +145,18 @@ export async function getReviews(req, res, next) {
       .limit(30);
 
     if (photoRows) {
-      allPhotos = photoRows.map((p) => p.image_url);
+      allPhotos = photoRows.map((p) => p.image_url).filter(Boolean);
     }
 
     // Sort images within each review
-    let formatted = (reviews ?? []).map((r) => ({
+    const formatted = (reviews ?? []).map((r) => ({
       ...r,
-      review_images: (r.review_images ?? []).sort((a, b) => a.sort_order - b.sort_order),
+      review_images: (r.review_images ?? [])
+        .filter((img) => Boolean(img?.image_url))
+        .sort((a, b) => a.sort_order - b.sort_order),
     }));
 
-    // If client requested onlyPictures, filter items having at least 1 image
-    if (onlyPictures) {
-      formatted = formatted.filter((r) => r.review_images.length > 0);
-    }
-
-    // Compute average rating & distribution
+    // Compute average rating across all reviews for this product
     const { data: stats } = await supabase
       .from("reviews")
       .select("rating")
@@ -196,13 +200,15 @@ export async function submitReview(req, res, next) {
       return res.status(400).json({ error: "Maximum 4 images allowed" });
     }
 
-    // Purchase verification: user must have a confirmed order with this product
+    const VALID_PURCHASE_STATUSES = ["confirmed", "processing", "shipped", "delivered"];
+
+    // Purchase verification: user must have a confirmed/delivered order with this product
     const { data: orderItems } = await supabase
       .from("order_items")
-      .select("id, orders!inner(user_id, status)")
+      .select("id, orders!inner(user_id, status, first_name, last_name)")
       .eq("product_id", productId)
       .eq("orders.user_id", user.id)
-      .eq("orders.status", "confirmed")
+      .in("orders.status", VALID_PURCHASE_STATUSES)
       .limit(1);
 
     if (!orderItems?.length) {
@@ -223,15 +229,20 @@ export async function submitReview(req, res, next) {
       return res.status(409).json({ error: "You have already reviewed this product." });
     }
 
-    // Get reviewer name from profiles
+    // Get reviewer name from profiles or verified order billing details
     const { data: profile } = await supabase
       .from("profiles")
       .select("first_name, last_name")
       .eq("id", user.id)
       .maybeSingle();
 
+    const orderCustomerName = [orderItems[0]?.orders?.first_name, orderItems[0]?.orders?.last_name]
+      .filter(Boolean)
+      .join(" ");
+
     const reviewerName =
       [profile?.first_name, profile?.last_name].filter(Boolean).join(" ") ||
+      orderCustomerName ||
       user.user_metadata?.full_name ||
       user.email?.split("@")[0] ||
       "Verified Customer";
@@ -280,7 +291,14 @@ export async function adminSubmitReview(req, res, next) {
       return res.status(401).json({ error: "Unauthorized" });
     }
 
-    const { productId, reviewerName, rating, title, body, verified = true, imageUrls = [] } = req.body;
+    const raw = req.body || {};
+    const productId = raw.productId || raw.product_id;
+    const reviewerName = (raw.reviewerName || raw.reviewer_name || "").toString().trim();
+    const rating = raw.rating !== undefined ? parseInt(raw.rating, 10) : undefined;
+    const title = raw.title;
+    const body = raw.body;
+    const verified = raw.verified !== undefined ? Boolean(raw.verified) : true;
+    const imageUrls = raw.imageUrls || raw.image_urls || [];
 
     if (!productId || !reviewerName || !rating) {
       return res.status(400).json({ error: "productId, reviewerName, and rating are required" });
@@ -295,13 +313,13 @@ export async function adminSubmitReview(req, res, next) {
     const { data: review, error } = await supabase
       .from("reviews")
       .insert({
-        product_id: productId,
+        product_id: parseInt(productId, 10),
         user_id: null,
-        reviewer_name: reviewerName.trim(),
+        reviewer_name: reviewerName,
         rating,
         title: title?.trim() || null,
         body: body?.trim() || null,
-        verified: Boolean(verified),
+        verified,
         source: "admin",
       })
       .select()
@@ -310,7 +328,7 @@ export async function adminSubmitReview(req, res, next) {
     if (error) return next(error);
 
     if (imageUrls.length > 0) {
-      const imageRows = imageUrls.map((url, i) => ({
+      const imageRows = imageUrls.slice(0, 4).filter(Boolean).map((url, i) => ({
         review_id: review.id,
         image_url: url,
         sort_order: i,
@@ -323,3 +341,130 @@ export async function adminSubmitReview(req, res, next) {
     next(err);
   }
 }
+
+// ── PUT /api/reviews/admin/:id ──────────────────────────────────────────────
+
+export async function adminUpdateReview(req, res, next) {
+  try {
+    const secret = req.headers["x-admin-secret"];
+    const expectedSecret = process.env.ADMIN_SECRET || "cambay_admin_secret_2024";
+    if (!secret || secret !== expectedSecret) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    const reviewId = parseInt(req.params.id, 10);
+    if (!reviewId || isNaN(reviewId)) {
+      return res.status(400).json({ error: "Invalid review ID" });
+    }
+
+    const raw = req.body || {};
+    const productId = raw.productId || raw.product_id;
+    const reviewerName = raw.reviewerName !== undefined ? raw.reviewerName : raw.reviewer_name;
+    const rating = raw.rating;
+    const title = raw.title;
+    const body = raw.body;
+    const verified = raw.verified;
+    const imageUrls = raw.imageUrls !== undefined ? raw.imageUrls : raw.image_urls;
+
+    const payload = {};
+
+    if (productId) payload.product_id = parseInt(productId, 10);
+    if (reviewerName !== undefined) {
+      const trimmed = reviewerName.toString().trim();
+      if (!trimmed) return res.status(400).json({ error: "Reviewer name cannot be empty" });
+      payload.reviewer_name = trimmed;
+    }
+    if (rating !== undefined) {
+      const numRating = parseInt(rating, 10);
+      if (numRating < 1 || numRating > 5) {
+        return res.status(400).json({ error: "Rating must be between 1 and 5" });
+      }
+      payload.rating = numRating;
+    }
+    if (title !== undefined) payload.title = title?.trim() || null;
+    if (body !== undefined) payload.body = body?.trim() || null;
+    if (verified !== undefined) payload.verified = Boolean(verified);
+
+    if (Object.keys(payload).length > 0) {
+      const { error: updateError } = await supabase
+        .from("reviews")
+        .update(payload)
+        .eq("id", reviewId);
+      if (updateError) return next(updateError);
+    }
+
+    if (imageUrls !== undefined) {
+      await supabase.from("review_images").delete().eq("review_id", reviewId);
+      if (imageUrls.length > 0) {
+        const imageRows = imageUrls.slice(0, 4).filter(Boolean).map((url, i) => ({
+          review_id: reviewId,
+          image_url: url,
+          sort_order: i,
+        }));
+        await supabase.from("review_images").insert(imageRows);
+      }
+    }
+
+    const { data: updated, error: fetchError } = await supabase
+      .from("reviews")
+      .select("*, review_images(id, image_url, sort_order)")
+      .eq("id", reviewId)
+      .single();
+
+    if (fetchError) return next(fetchError);
+    return res.json({ review: updated });
+  } catch (err) {
+    next(err);
+  }
+}
+
+// ── DELETE /api/reviews/admin/:id ───────────────────────────────────────────
+
+export async function adminDeleteReview(req, res, next) {
+  try {
+    const secret = req.headers["x-admin-secret"];
+    const expectedSecret = process.env.ADMIN_SECRET || "cambay_admin_secret_2024";
+    if (!secret || secret !== expectedSecret) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    const reviewId = parseInt(req.params.id, 10);
+    if (!reviewId || isNaN(reviewId)) {
+      return res.status(400).json({ error: "Invalid review ID" });
+    }
+
+    await supabase.from("review_images").delete().eq("review_id", reviewId);
+    const { error } = await supabase.from("reviews").delete().eq("id", reviewId);
+    if (error) return next(error);
+
+    return res.json({ success: true, message: "Review deleted" });
+  } catch (err) {
+    next(err);
+  }
+}
+
+// ── GET /api/reviews (All reviews / filter by product) ─────────────────────────
+
+export async function getAllReviews(req, res, next) {
+  try {
+    const productId = req.query.productId || req.query.product_id;
+    let query = supabase
+      .from("reviews")
+      .select("*, products(id, title, image_url), review_images(id, image_url, sort_order)")
+      .order("created_at", { ascending: false });
+
+    if (productId) {
+      const pid = parseInt(productId, 10);
+      if (!isNaN(pid)) {
+        query = query.eq("product_id", pid);
+      }
+    }
+
+    const { data, error } = await query;
+    if (error) return next(error);
+    return res.json(data ?? []);
+  } catch (err) {
+    next(err);
+  }
+}
+

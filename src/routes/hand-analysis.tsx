@@ -328,8 +328,8 @@ function ChakraBadge({
   return (
     <div className="flex items-center gap-3 rounded-xl border border-border bg-card p-3">
       <div
-        className="h-3 w-3 flex-shrink-0 rounded-full ring-4"
-        style={{ backgroundColor: chakra.color, ringColor: `${chakra.color}33` }}
+        className="h-3 w-3 flex-shrink-0 rounded-full"
+        style={{ backgroundColor: chakra.color, boxShadow: `0 0 0 4px ${chakra.color}33` }}
       />
       <div className="flex-1 min-w-0">
         <p className="text-sm font-medium">{chakra.name} Chakra</p>

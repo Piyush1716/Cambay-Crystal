@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Filter, MessageCircleQuestion, Sparkles, Loader2, ChevronDown } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { Filter, MessageCircleQuestion, Sparkles, Loader2, PenLine, HelpCircle } from "lucide-react";
 import { StarRating } from "./StarRating";
 import { ReviewPhotoStrip } from "./ReviewPhotoStrip";
 import { ReviewCard } from "./ReviewCard";
@@ -17,7 +18,7 @@ interface CustomerReviewsProps {
 export function CustomerReviews({
   productId,
   productName,
-  initialRating = 4.8,
+  initialRating = 5.0,
   initialReviewsCount = 0,
 }: CustomerReviewsProps) {
   const [reviews, setReviews] = useState<ApiReview[]>([]);
@@ -53,8 +54,8 @@ export function CustomerReviews({
         if (res.data) {
           const fetchedReviews = res.data.reviews || [];
           setReviews((prev) => (append ? [...prev, ...fetchedReviews] : fetchedReviews));
-          setTotalCount(res.data.totalCount ?? initialReviewsCount);
-          setAvgRating(res.data.avgRating || initialRating);
+          setTotalCount(res.data.totalCount ?? 0);
+          setAvgRating(res.data.totalCount > 0 ? (res.data.avgRating || 0) : 0);
           setAllPhotos(res.data.allPhotos || []);
           setPage(res.data.page || 1);
           setTotalPages(res.data.totalPages || 1);
@@ -66,7 +67,7 @@ export function CustomerReviews({
         setLoadingMore(false);
       }
     },
-    [productId, initialRating, initialReviewsCount, onlyPictures]
+    [productId, onlyPictures]
   );
 
   useEffect(() => {
@@ -85,63 +86,70 @@ export function CustomerReviews({
   };
 
   return (
-    <section className="py-10 max-w-7xl mx-auto px-4 lg:px-6">
+    <section className="py-12 sm:py-16 max-w-7xl mx-auto px-4 lg:px-6">
       {/* ─── Top Section: Title & Summary Header ───────────────────────── */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 pb-6 border-b border-border/80">
-        <div>
-          <h2 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight">
-            Customer Reviews
-          </h2>
+      <div className="bg-card rounded-3xl p-6 sm:p-8 border border-border shadow-xs mb-8">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 pb-6 border-b border-border/70">
+          <div>
+            <p className="text-xs sm:text-sm uppercase tracking-[0.25em] text-primary mb-1.5 font-medium">
+              Customer Feedback
+            </p>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight">
+              Customer Reviews
+            </h2>
 
-          <div className="flex items-center gap-3 mt-2.5">
-            <span className="text-3xl sm:text-4xl font-extrabold text-foreground tracking-tight">
-              {avgRating.toFixed(1)}
-            </span>
-            <div className="flex flex-col">
-              <StarRating rating={avgRating} size="md" />
-              <span className="text-xs sm:text-sm text-muted-foreground mt-0.5">
-                {totalCount} {totalCount === 1 ? "review" : "reviews"}
+            <div className="flex items-center gap-3 mt-3">
+              <span className="text-3xl sm:text-4xl font-bold text-foreground tracking-tight">
+                {totalCount > 0 ? avgRating.toFixed(1) : "0.0"}
               </span>
+              <div className="flex flex-col">
+                <StarRating rating={totalCount > 0 ? avgRating : 0} size="md" />
+                <span className="text-xs sm:text-sm text-muted-foreground mt-0.5 font-normal">
+                  {totalCount} {totalCount === 1 ? "review" : "reviews"}
+                </span>
+              </div>
             </div>
+          </div>
+
+          {/* Action Buttons following site theme */}
+          <div className="flex items-center gap-3 flex-wrap">
+            <button
+              type="button"
+              onClick={() => setReviewModalOpen(true)}
+              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-all shadow-sm active:scale-[0.98]"
+            >
+              <PenLine className="w-4 h-4" />
+              Write a review
+            </button>
+            <Link
+              to="/contact"
+              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground text-sm font-medium transition-all active:scale-[0.98]"
+            >
+              <HelpCircle className="w-4 h-4" />
+              Ask a question
+            </Link>
           </div>
         </div>
 
-        {/* Action Buttons */}
-        <div className="flex items-center gap-3">
-          <button
-            type="button"
-            onClick={() => setReviewModalOpen(true)}
-            className="px-6 py-2.5 rounded-full bg-[#c53030] text-white text-sm font-semibold hover:bg-[#b02828] transition-all shadow-sm hover:shadow active:scale-[0.98]"
-          >
-            Write a review
-          </button>
-          <a
-            href="/contact"
-            className="px-6 py-2.5 rounded-full border border-border bg-background hover:bg-secondary text-foreground text-sm font-medium transition-all"
-          >
-            Ask a question
-          </a>
-        </div>
+        {/* ─── Customer Photos Strip ────────────────────────────────────── */}
+        {allPhotos.length > 0 && (
+          <div className="pt-2">
+            <ReviewPhotoStrip photos={allPhotos} onPhotoClick={handleStripPhotoClick} />
+          </div>
+        )}
       </div>
 
-      {/* ─── Customer Photos Strip ────────────────────────────────────── */}
-      {allPhotos.length > 0 && (
-        <div className="py-2">
-          <ReviewPhotoStrip photos={allPhotos} onPhotoClick={handleStripPhotoClick} />
-        </div>
-      )}
-
       {/* ─── Navigation Tabs & Filter Row ─────────────────────────────── */}
-      <div className="flex items-center justify-between border-b border-border/80 mt-4 mb-2">
+      <div className="flex items-center justify-between border-b border-border mb-6">
         {/* Tabs */}
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-8">
           <button
             type="button"
             onClick={() => setActiveTab("reviews")}
-            className={`py-3 text-sm font-semibold whitespace-nowrap border-b-2 -mb-px transition-colors ${
+            className={`py-3.5 text-sm sm:text-base whitespace-nowrap border-b-2 -mb-px transition-colors ${
               activeTab === "reviews"
-                ? "border-foreground text-foreground"
-                : "border-transparent text-muted-foreground hover:text-foreground"
+                ? "border-primary text-primary font-semibold"
+                : "border-transparent text-muted-foreground hover:text-foreground font-medium"
             }`}
           >
             Reviews ({totalCount})
@@ -149,10 +157,10 @@ export function CustomerReviews({
           <button
             type="button"
             onClick={() => setActiveTab("questions")}
-            className={`py-3 text-sm font-semibold whitespace-nowrap border-b-2 -mb-px transition-colors ${
+            className={`py-3.5 text-sm sm:text-base whitespace-nowrap border-b-2 -mb-px transition-colors ${
               activeTab === "questions"
-                ? "border-foreground text-foreground"
-                : "border-transparent text-muted-foreground hover:text-foreground"
+                ? "border-primary text-primary font-semibold"
+                : "border-transparent text-muted-foreground hover:text-foreground font-medium"
             }`}
           >
             Questions (0)
@@ -165,10 +173,10 @@ export function CustomerReviews({
             <button
               type="button"
               onClick={() => setOnlyPictures(!onlyPictures)}
-              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition ${
+              className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium border transition-all ${
                 onlyPictures
-                  ? "bg-foreground text-background border-foreground"
-                  : "bg-background text-foreground/80 border-border hover:bg-secondary"
+                  ? "bg-primary text-primary-foreground border-primary shadow-xs"
+                  : "bg-background text-foreground/80 border-border hover:border-primary/50 hover:bg-secondary/40"
               }`}
             >
               <Filter className="w-3.5 h-3.5" />
@@ -180,29 +188,43 @@ export function CustomerReviews({
 
       {/* ─── Tab Content ──────────────────────────────────────────────── */}
       {activeTab === "reviews" ? (
-        <div className="divide-y divide-border/60">
+        <div className="space-y-4">
           {loading && reviews.length === 0 ? (
-            <div className="py-16 text-center text-muted-foreground flex flex-col items-center">
-              <Loader2 className="w-7 h-7 animate-spin text-primary mb-2" />
-              <p className="text-sm">Loading reviews...</p>
+            <div className="py-20 text-center text-muted-foreground flex flex-col items-center">
+              <Loader2 className="w-8 h-8 animate-spin text-primary mb-3" />
+              <p className="text-sm font-medium">Loading reviews…</p>
             </div>
           ) : reviews.length === 0 ? (
-            <div className="py-16 text-center space-y-3">
-              <Sparkles className="w-10 h-10 text-primary/40 mx-auto" />
-              <h4 className="text-base font-semibold text-foreground">No Reviews Yet</h4>
-              <p className="text-sm text-muted-foreground max-w-sm mx-auto">
-                {onlyPictures
-                  ? "No customer reviews with pictures found. Try switching off the picture filter."
-                  : "Be the first verified customer to share your thoughts on this crystal!"}
-              </p>
+            <div className="bg-card rounded-3xl p-10 sm:p-14 text-center border border-border space-y-4">
+              <div className="w-14 h-14 rounded-full bg-secondary text-primary flex items-center justify-center mx-auto">
+                <Sparkles className="w-7 h-7" />
+              </div>
+              <div>
+                <h4 className="text-lg font-semibold text-foreground">No Reviews Yet</h4>
+                <p className="text-sm text-muted-foreground max-w-sm mx-auto mt-1">
+                  {onlyPictures
+                    ? "No customer reviews with pictures found. Try switching off the picture filter."
+                    : "Be the first verified customer to share your experience with this crystal!"}
+                </p>
+              </div>
               <div className="pt-2">
-                <button
-                  type="button"
-                  onClick={() => setReviewModalOpen(true)}
-                  className="px-6 py-2.5 rounded-full bg-[#c53030] text-white text-xs sm:text-sm font-semibold hover:bg-[#b02828] transition shadow-sm"
-                >
-                  Write the first review
-                </button>
+                {onlyPictures ? (
+                  <button
+                    type="button"
+                    onClick={() => setOnlyPictures(false)}
+                    className="px-6 py-2.5 rounded-full bg-secondary hover:bg-secondary/80 text-foreground text-sm font-medium transition shadow-xs"
+                  >
+                    Show all reviews
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setReviewModalOpen(true)}
+                    className="px-6 py-2.5 rounded-full bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition shadow-sm"
+                  >
+                    Write the first review
+                  </button>
+                )}
               </div>
             </div>
           ) : (
@@ -217,17 +239,17 @@ export function CustomerReviews({
 
               {/* Load More Button */}
               {page < totalPages && (
-                <div className="py-6 text-center">
+                <div className="py-8 text-center">
                   <button
                     type="button"
                     disabled={loadingMore}
                     onClick={() => loadReviewsData(page + 1, true, onlyPictures)}
-                    className="px-6 py-2.5 rounded-full border border-border bg-card hover:bg-secondary text-sm font-medium text-foreground transition inline-flex items-center gap-2"
+                    className="px-8 py-3 rounded-full border border-border bg-card hover:bg-secondary text-sm font-medium text-foreground transition inline-flex items-center gap-2 shadow-xs"
                   >
                     {loadingMore ? (
                       <>
                         <Loader2 className="w-4 h-4 animate-spin text-primary" />
-                        <span>Loading more...</span>
+                        <span>Loading more…</span>
                       </>
                     ) : (
                       <span>Load more reviews</span>
@@ -240,19 +262,23 @@ export function CustomerReviews({
         </div>
       ) : (
         /* Questions tab */
-        <div className="py-16 text-center space-y-3">
-          <MessageCircleQuestion className="w-10 h-10 text-muted-foreground/40 mx-auto" />
-          <h4 className="text-base font-semibold text-foreground">Have a question?</h4>
-          <p className="text-sm text-muted-foreground max-w-sm mx-auto">
-            Got a doubt regarding wrist sizing, stone authenticity, or cleansing? Ask our crystal experts.
-          </p>
+        <div className="bg-card rounded-3xl p-10 sm:p-14 text-center border border-border space-y-4">
+          <div className="w-14 h-14 rounded-full bg-secondary text-primary flex items-center justify-center mx-auto">
+            <MessageCircleQuestion className="w-7 h-7" />
+          </div>
+          <div>
+            <h4 className="text-lg font-semibold text-foreground">Have a question about this item?</h4>
+            <p className="text-sm text-muted-foreground max-w-md mx-auto mt-1">
+              Have doubts about bead sizing, gemstone authenticity, or cleansing? Ask our crystal healing team directly.
+            </p>
+          </div>
           <div className="pt-2">
-            <a
-              href="/contact"
-              className="inline-block px-6 py-2.5 rounded-full bg-primary text-primary-foreground text-xs sm:text-sm font-semibold hover:bg-primary/90 transition shadow-sm"
+            <Link
+              to="/contact"
+              className="inline-block px-7 py-2.5 rounded-full bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition shadow-sm"
             >
-              Ask a Question
-            </a>
+              Contact Support
+            </Link>
           </div>
         </div>
       )}

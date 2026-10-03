@@ -63,3 +63,21 @@ DROP POLICY IF EXISTS "review_images: authenticated insert" ON review_images;
 CREATE POLICY "review_images: authenticated insert"
   ON review_images FOR INSERT TO authenticated
   WITH CHECK (true);
+
+-- 5. Supabase Storage Bucket setup for review-images
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('review-images', 'review-images', true)
+ON CONFLICT (id) DO UPDATE SET public = true;
+
+-- Allow public read of review photos
+DROP POLICY IF EXISTS "review_images: storage public read" ON storage.objects;
+CREATE POLICY "review_images: storage public read"
+  ON storage.objects FOR SELECT
+  USING (bucket_id = 'review-images');
+
+-- Allow authenticated users to upload review photos
+DROP POLICY IF EXISTS "review_images: storage authenticated upload" ON storage.objects;
+CREATE POLICY "review_images: storage authenticated upload"
+  ON storage.objects FOR INSERT
+  TO authenticated
+  WITH CHECK (bucket_id = 'review-images');

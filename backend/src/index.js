@@ -80,9 +80,10 @@ if (process.env.NODE_ENV !== "production") {
     console.log("   POST /api/payments/cancel");
     console.log("   POST /api/contact");
     console.log("   GET  /api/sitemap");
-   console.log("   GET  /api/reviews/:productId");
-   console.log("   POST /api/reviews");
-   console.log("   POST /api/reviews/admin\n");
+    console.log("   GET  /api/reviews");
+    console.log("   GET  /api/reviews/:productId");
+    console.log("   POST /api/reviews");
+    console.log("   POST /api/reviews/admin\n");
   });
 }
 

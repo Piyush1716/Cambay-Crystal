@@ -11,7 +11,7 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { canonical, og, twitter, productSchema, breadcrumbSchema, SITE_URL } from "@/lib/seo";
 
 export const Route = createFileRoute("/product/$slug")({
-  head: ({ loaderData }) => {
+  head: ({ loaderData }: { loaderData?: { product?: Product; related?: Product[] } }) => {
     const product = loaderData?.product as Product | undefined;
     const title = product ? `${product.name} — Cambay Crystal` : "Product — Cambay Crystal";
     const description = product?.shortDescription
@@ -177,7 +177,7 @@ function ProductPage() {
   const { product, related } = Route.useLoaderData() as { product: Product; related: Product[] };
   const [size, setSize] = useState<string | undefined>(product.sizes?.[2]);
   const [qty, setQty] = useState(1);
-  const [tab, setTab] = useState<"desc" | "reviews">("desc");
+  const [tab, setTab] = useState<"desc" | "benefits">("desc");
   const { add } = useCart();
   const { toggle: wishlistToggle, has: wishlistHas } = useWishlist();
   const navigate = useNavigate();
@@ -233,16 +233,26 @@ function ProductPage() {
 
               {/* Rating */}
               {product.rating !== undefined && (
-                <div className="flex items-center gap-2 mb-4">
+                <a
+                  href="#customer-reviews"
+                  className="inline-flex items-center gap-2 mb-4 hover:opacity-85 transition cursor-pointer group"
+                >
                   <div className="flex">
                     {[1, 2, 3, 4, 5].map((s) => (
-                      <Star key={s} className={`h-4 w-4 ${s <= Math.round(product.rating ?? 0) ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground"}`} />
+                      <Star
+                        key={s}
+                        className={`h-4 w-4 ${
+                          s <= Math.round(product.rating ?? 0)
+                            ? "fill-amber-400 text-amber-400"
+                            : "text-muted-foreground/30 fill-transparent"
+                        }`}
+                      />
                     ))}
                   </div>
-                  <span className="text-sm text-muted-foreground">
+                  <span className="text-sm text-muted-foreground group-hover:text-primary transition-colors">
                     {product.rating} ({product.reviews} reviews)
                   </span>
-                </div>
+                </a>
               )}
 
               {/* Price */}
@@ -360,7 +370,7 @@ function ProductPage() {
             ].map((t) => (
               <button
                 key={t.id}
-                onClick={() => setTab(t.id as "desc" | "reviews")}
+                onClick={() => setTab(t.id as "desc" | "benefits")}
                 className={`py-3 text-sm font-medium whitespace-nowrap border-b-2 -mb-px transition ${
                   tab === t.id
                     ? "border-primary text-primary"
@@ -403,12 +413,14 @@ function ProductPage() {
         </section>
 
         {/* Customer Reviews Section */}
-        <CustomerReviews
-          productId={product.id}
-          productName={product.name}
-          initialRating={product.rating ?? 4.8}
-          initialReviewsCount={product.reviews ?? 0}
-        />
+        <div id="customer-reviews" className="scroll-mt-16">
+          <CustomerReviews
+            productId={product.id}
+            productName={product.name}
+            initialRating={product.rating ?? 4.8}
+            initialReviewsCount={product.reviews ?? 0}
+          />
+        </div>
 
         {/* Related */}
         {related.length > 0 && (

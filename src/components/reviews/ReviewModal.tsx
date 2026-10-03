@@ -35,6 +35,16 @@ export function ReviewModal({
   const [uploadingImage, setUploadingImage] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
+  // Lock body scroll when modal is open
+  useEffect(() => {
+    if (!isOpen) return;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [isOpen]);
+
   // Check eligibility whenever modal opens
   useEffect(() => {
     if (!isOpen) return;
@@ -58,14 +68,15 @@ export function ReviewModal({
           setAlreadyReviewed(res.data.alreadyReviewed);
           setEligibilityMessage(res.data.message);
         } else {
-          // If endpoint is unreachable or table not migrated yet, allow submission attempt
-          setCanReview(true);
+          setCanReview(false);
+          setEligibilityMessage(res.error || "Unable to verify purchase status.");
         }
       })
       .catch(() => {
         if (!isMounted) return;
         setChecking(false);
-        setCanReview(true);
+        setCanReview(false);
+        setEligibilityMessage("Network error verifying purchase status.");
       });
 
     return () => {
@@ -100,7 +111,7 @@ export function ReviewModal({
         continue;
       }
 
-      const ext = file.name.split(".").pop() || "jpg";
+      const ext = (file.name.split(".").pop() || "jpg").toLowerCase();
       const fileName = `review-${productId}-${Date.now()}-${Math.random().toString(36).substring(2, 7)}.${ext}`;
 
       try {
@@ -131,7 +142,6 @@ export function ReviewModal({
 
     setImages((prev) => [...prev, ...newUrls].slice(0, 4));
     setUploadingImage(false);
-    // Reset file input
     e.target.value = "";
   };
 
@@ -170,7 +180,6 @@ export function ReviewModal({
         toast.success("Thank you! Your verified review has been published.");
         onReviewSubmitted();
         onClose();
-        // Reset form
         setTitle("");
         setBody("");
         setImages([]);
@@ -185,11 +194,18 @@ export function ReviewModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-      <div className="relative w-full max-w-lg bg-card rounded-2xl shadow-2xl border border-border overflow-hidden">
+    <div
+      onClick={onClose}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200"
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="relative w-full max-w-lg bg-card rounded-3xl shadow-2xl border border-border overflow-hidden"
+      >
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-border/80">
           <div>
+            <span className="text-[11px] uppercase tracking-wider text-primary font-medium block">Verified Customer Review</span>
             <h3 className="text-lg font-bold text-foreground">Write a Review</h3>
             <p className="text-xs text-muted-foreground line-clamp-1">{productName}</p>
           </div>
@@ -206,7 +222,7 @@ export function ReviewModal({
           {checking ? (
             <div className="py-12 flex flex-col items-center justify-center text-muted-foreground">
               <Loader2 className="w-8 h-8 animate-spin text-primary mb-3" />
-              <p className="text-sm">Checking order verification...</p>
+              <p className="text-sm">Verifying purchase history...</p>
             </div>
           ) : !isLoggedIn ? (
             <div className="py-8 text-center space-y-4">
@@ -234,13 +250,13 @@ export function ReviewModal({
             </div>
           ) : alreadyReviewed ? (
             <div className="py-8 text-center space-y-4">
-              <div className="w-12 h-12 rounded-full bg-emerald-500/10 text-emerald-600 flex items-center justify-center mx-auto">
+              <div className="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center mx-auto">
                 <CheckCircle2 className="w-6 h-6" />
               </div>
               <div>
                 <h4 className="font-semibold text-foreground text-base">Already Reviewed</h4>
                 <p className="text-sm text-muted-foreground mt-1 max-w-xs mx-auto">
-                  You have already submitted a review for this product. Thank you for your authentic feedback!
+                  You have already submitted a review for this product. Thank you for sharing your experience!
                 </p>
               </div>
               <div className="pt-2">
@@ -255,7 +271,7 @@ export function ReviewModal({
             </div>
           ) : !canReview ? (
             <div className="py-8 text-center space-y-4">
-              <div className="w-12 h-12 rounded-full bg-amber-500/10 text-amber-600 flex items-center justify-center mx-auto">
+              <div className="w-12 h-12 rounded-full bg-secondary text-primary flex items-center justify-center mx-auto">
                 <AlertCircle className="w-6 h-6" />
               </div>
               <div>
@@ -269,7 +285,7 @@ export function ReviewModal({
                 <button
                   type="button"
                   onClick={onClose}
-                  className="px-6 py-2 rounded-full bg-secondary hover:bg-secondary/80 text-foreground font-medium text-sm transition"
+                  className="px-6 py-2.5 rounded-full bg-secondary hover:bg-secondary/80 text-foreground font-medium text-sm transition"
                 >
                   Understood
                 </button>
@@ -309,7 +325,7 @@ export function ReviewModal({
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="e.g. Packing was soo good, genuine crystals!"
-                  className="w-full px-3.5 py-2.5 text-sm rounded-xl border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition"
+                  className="w-full px-4 py-2.5 text-sm rounded-xl border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition"
                   maxLength={100}
                 />
               </div>
@@ -324,7 +340,7 @@ export function ReviewModal({
                   onChange={(e) => setBody(e.target.value)}
                   placeholder="What did you like or dislike? How does the energy of the crystal feel?"
                   rows={4}
-                  className="w-full px-3.5 py-2.5 text-sm rounded-xl border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition resize-none"
+                  className="w-full px-4 py-2.5 text-sm rounded-xl border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition resize-none"
                   maxLength={1000}
                 />
               </div>
@@ -342,7 +358,7 @@ export function ReviewModal({
                   {images.map((url, idx) => (
                     <div
                       key={idx}
-                      className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden border border-border group"
+                      className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden border border-border group"
                     >
                       <img src={url} alt="Upload preview" className="w-full h-full object-cover" />
                       <button
@@ -356,7 +372,7 @@ export function ReviewModal({
                   ))}
 
                   {images.length < 4 && (
-                    <label className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl border-2 border-dashed border-border/80 hover:border-primary flex flex-col items-center justify-center cursor-pointer transition bg-secondary/30 hover:bg-secondary/60">
+                    <label className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl border-2 border-dashed border-border/80 hover:border-primary flex flex-col items-center justify-center cursor-pointer transition bg-secondary/30 hover:bg-secondary/60">
                       {uploadingImage ? (
                         <Loader2 className="w-5 h-5 animate-spin text-primary" />
                       ) : (
@@ -390,7 +406,7 @@ export function ReviewModal({
                 <button
                   type="submit"
                   disabled={submitting || uploadingImage}
-                  className="px-6 py-2.5 rounded-full bg-[#c53030] text-white text-sm font-semibold hover:bg-[#b02828] transition disabled:opacity-50 flex items-center gap-2 shadow-md shadow-red-900/10"
+                  className="px-6 py-2.5 rounded-full bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition disabled:opacity-50 flex items-center gap-2 shadow-sm"
                 >
                   {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
                   Submit Review
