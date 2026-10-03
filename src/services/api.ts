@@ -316,3 +316,86 @@ export async function submitContact(data: {
     body: JSON.stringify(data),
   });
 }
+
+// ─── Reviews ──────────────────────────────────────────────────────────────────
+
+export type ApiReviewImage = {
+  id?: number;
+  image_url: string;
+  sort_order?: number;
+};
+
+export type ApiReview = {
+  id: number;
+  product_id: number;
+  user_id?: string | null;
+  reviewer_name: string;
+  rating: number;
+  title?: string | null;
+  body?: string | null;
+  verified: boolean;
+  source: "user" | "admin";
+  created_at: string;
+  review_images?: ApiReviewImage[];
+};
+
+export type ApiReviewsResponse = {
+  reviews: ApiReview[];
+  totalCount: number;
+  avgRating: number;
+  allPhotos: string[];
+  page: number;
+  pageSize: number;
+  totalPages: number;
+};
+
+export type ApiReviewEligibility = {
+  authenticated: boolean;
+  hasPurchased: boolean;
+  alreadyReviewed: boolean;
+  canReview: boolean;
+  message: string;
+};
+
+export async function fetchReviews(
+  productId: number,
+  page = 1,
+  limit = 10,
+  onlyPictures = false
+) {
+  const params = new URLSearchParams({
+    page: String(page),
+    limit: String(limit),
+    ...(onlyPictures ? { onlyPictures: "true" } : {}),
+  });
+  console.log(`[api/reviews] Fetching reviews for product: ${productId} (page=${page}, picturesOnly=${onlyPictures})`);
+  return apiFetch<ApiReviewsResponse>(`/api/reviews/${productId}?${params.toString()}`);
+}
+
+export async function checkReviewEligibility(productId: number, token?: string) {
+  console.log(`[api/reviews] Checking review eligibility for product: ${productId}`);
+  return apiFetch<ApiReviewEligibility>(`/api/reviews/eligibility/${productId}`, {
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+  });
+}
+
+export async function submitReview(
+  payload: {
+    productId: number;
+    rating: number;
+    title?: string;
+    body?: string;
+    imageUrls?: string[];
+  },
+  token: string
+) {
+  console.log(`[api/reviews] Submitting review for product: ${payload.productId}`);
+  return apiFetch<{ review: ApiReview }>("/api/reviews", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(payload),
+  });
+}
+

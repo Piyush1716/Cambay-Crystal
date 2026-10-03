@@ -18,6 +18,7 @@ import orderRoutes from "./routes/orders.routes.js";
 import paymentRoutes from "./routes/payments.routes.js";
 import contactRoutes from "./routes/contact.routes.js";
 import sitemapRoutes from "./routes/sitemap.routes.js";
+import reviewRoutes from "./routes/reviews.routes.js";
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -36,6 +37,7 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/contact", contactRoutes);
 app.use("/api/sitemap", sitemapRoutes);
+app.use("/api/reviews", reviewRoutes);
 
 // ─── Health check ─────────────────────────────────────────────────────────────
 
@@ -77,7 +79,10 @@ if (process.env.NODE_ENV !== "production") {
     console.log("   POST /api/payments/failure");
     console.log("   POST /api/payments/cancel");
     console.log("   POST /api/contact");
-    console.log("   GET  /api/sitemap\n");
+    console.log("   GET  /api/sitemap");
+   console.log("   GET  /api/reviews/:productId");
+   console.log("   POST /api/reviews");
+   console.log("   POST /api/reviews/admin\n");
   });
 }
 

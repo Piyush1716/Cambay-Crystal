@@ -3,6 +3,7 @@ import { useState, useCallback } from "react";
 import { Star, Heart, Minus, Plus, Truck, ShieldCheck, Sparkles, ChevronRight, ChevronLeft, ShoppingBag, ArrowRight } from "lucide-react";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
+import { CustomerReviews } from "@/components/reviews/CustomerReviews";
 import { fetchProductBySlug, fetchProducts, type Product } from "@/lib/products";
 import { useCart } from "@/lib/cart";
 import { useWishlist } from "@/lib/wishlist";
@@ -350,17 +351,21 @@ function ProductPage() {
           </div>
         </section>
 
-        {/* Tabs */}
-        <section className="max-w-7xl mx-auto px-4 lg:px-6 pb-12">
+        {/* Product Details & Benefits */}
+        <section className="max-w-7xl mx-auto px-4 lg:px-6 pb-6">
           <div className="border-b border-border flex gap-6">
             {[
               { id: "desc", label: "Description" },
-              { id: "reviews", label: `Reviews (${product.reviews ?? 0})` },
+              { id: "benefits", label: "Benefits & Healing" },
             ].map((t) => (
               <button
                 key={t.id}
-                onClick={() => setTab(t.id as typeof tab)}
-                className={`py-3 text-sm font-medium whitespace-nowrap border-b-2 -mb-px transition ${tab === t.id ? "border-primary text-primary" : "border-transparent text-muted-foreground"}`}
+                onClick={() => setTab(t.id as "desc" | "reviews")}
+                className={`py-3 text-sm font-medium whitespace-nowrap border-b-2 -mb-px transition ${
+                  tab === t.id
+                    ? "border-primary text-primary"
+                    : "border-transparent text-muted-foreground hover:text-foreground"
+                }`}
               >
                 {t.label}
               </button>
@@ -368,42 +373,42 @@ function ProductPage() {
           </div>
 
           <div className="py-6 prose max-w-none">
-            {tab === "desc" && (
-              <div className="space-y-4 text-sm sm:text-base text-foreground/80">
-                {product.benefits && product.benefits.length > 0 ? (
-                  <>
-                    <h3 className="text-lg font-semibold text-foreground">Benefits of a {product.name}</h3>
-                    <ul className="list-disc pl-5 space-y-1">
-                      {product.benefits.map((b) => <li key={b}>{b}</li>)}
-                    </ul>
-                  </>
-                ) : (
-                  <p>{product.description ?? "No description available."}</p>
-                )}
+            {tab === "benefits" && product.benefits && product.benefits.length > 0 ? (
+              <div className="space-y-4 text-sm sm:text-base text-foreground/85">
+                <h3 className="text-lg font-semibold text-foreground">
+                  Healing Energy & Benefits of {product.name}
+                </h3>
+                <ul className="list-disc pl-5 space-y-1.5">
+                  {product.benefits.map((b) => (
+                    <li key={b}>{b}</li>
+                  ))}
+                </ul>
               </div>
-            )}
-            {tab === "reviews" && (
-              <div className="space-y-4">
-                {product.rating !== undefined ? (
-                  <div className="flex items-center gap-4">
-                    <div className="text-5xl font-semibold">{product.rating}</div>
-                    <div>
-                      <div className="flex">
-                        {[1, 2, 3, 4, 5].map((s) => (
-                          <Star key={s} className={`h-4 w-4 ${s <= Math.round(product.rating ?? 0) ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground"}`} />
-                        ))}
-                      </div>
-                      <p className="text-sm text-muted-foreground">Based on {product.reviews} reviews</p>
-                    </div>
+            ) : (
+              <div className="space-y-4 text-sm sm:text-base text-foreground/85">
+                <p>{product.description ?? "No description available."}</p>
+                {product.benefits && product.benefits.length > 0 && (
+                  <div className="mt-4">
+                    <h4 className="font-semibold text-foreground mb-2">Key Properties:</h4>
+                    <ul className="list-disc pl-5 space-y-1">
+                      {product.benefits.slice(0, 3).map((b) => (
+                        <li key={b}>{b}</li>
+                      ))}
+                    </ul>
                   </div>
-                ) : (
-                  <p className="text-muted-foreground text-sm">No reviews yet.</p>
                 )}
-                <p className="text-sm text-muted-foreground">Sign in to leave a review.</p>
               </div>
             )}
           </div>
         </section>
+
+        {/* Customer Reviews Section */}
+        <CustomerReviews
+          productId={product.id}
+          productName={product.name}
+          initialRating={product.rating ?? 4.8}
+          initialReviewsCount={product.reviews ?? 0}
+        />
 
         {/* Related */}
         {related.length > 0 && (
