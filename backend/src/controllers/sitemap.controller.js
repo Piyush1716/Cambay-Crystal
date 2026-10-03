@@ -21,6 +21,7 @@ const SITE_LAUNCH = "2026-09-10";
 const STATIC_PAGES = [
   { path: "/",                      changefreq: "daily",   priority: "1.0", lastmod: TODAY         },
   { path: "/categories",            changefreq: "weekly",  priority: "0.9", lastmod: TODAY         },
+  { path: "/stones",                changefreq: "weekly",  priority: "0.85", lastmod: TODAY        },
   { path: "/customized-bracelet",   changefreq: "monthly", priority: "0.8", lastmod: SITE_LAUNCH   },
   { path: "/hand-analysis",         changefreq: "monthly", priority: "0.8", lastmod: SITE_LAUNCH   },
   { path: "/bulk-order",            changefreq: "monthly", priority: "0.7", lastmod: SITE_LAUNCH   },
@@ -79,6 +80,21 @@ export async function getSitemap(req, res) {
       throw prodErr;
     }
 
+    // Fetch all active stones slugs + timestamps (gracefully handling unmigrated db)
+    let stones = [];
+    try {
+      const { data: stoneData, error: stoneErr } = await supabase
+        .from("stones")
+        .select("slug, created_at")
+        .eq("available", true)
+        .order("slug");
+      if (!stoneErr && stoneData) {
+        stones = stoneData;
+      }
+    } catch {
+      // Ignore if stones table does not yet exist
+    }
+
     // Build URL entries
     const staticEntries = STATIC_PAGES.map((p) =>
       urlEntry({
@@ -98,6 +114,15 @@ export async function getSitemap(req, res) {
       })
     );
 
+    const stoneEntries = (stones || []).map((st) =>
+      urlEntry({
+        loc: `${BASE_URL}/stone/${st.slug}`,
+        changefreq: "weekly",
+        priority: "0.8",
+        lastmod: bestDate(st),
+      })
+    );
+
     // Products get the highest priority after the homepage
     const productEntries = (products || []).map((prod) =>
       urlEntry({
@@ -108,7 +133,7 @@ export async function getSitemap(req, res) {
       })
     );
 
-    const allEntries = [...staticEntries, ...categoryEntries, ...productEntries];
+    const allEntries = [...staticEntries, ...categoryEntries, ...stoneEntries, ...productEntries];
 
     const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"

@@ -19,6 +19,7 @@ import paymentRoutes from "./routes/payments.routes.js";
 import contactRoutes from "./routes/contact.routes.js";
 import sitemapRoutes from "./routes/sitemap.routes.js";
 import reviewRoutes from "./routes/reviews.routes.js";
+import stonesRoutes from "./routes/stones.routes.js";
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -38,6 +39,7 @@ app.use("/api/payments", paymentRoutes);
 app.use("/api/contact", contactRoutes);
 app.use("/api/sitemap", sitemapRoutes);
 app.use("/api/reviews", reviewRoutes);
+app.use("/api/stones", stonesRoutes);
 
 // ─── Health check ─────────────────────────────────────────────────────────────
 
@@ -83,6 +85,9 @@ if (process.env.NODE_ENV !== "production") {
     console.log("   GET  /api/reviews");
     console.log("   GET  /api/reviews/:productId");
     console.log("   POST /api/reviews");
+    console.log("   GET  /api/stones");
+    console.log("   GET  /api/stones/:slug");
+    console.log("   GET  /api/stones/:slug/products");
     console.log("   POST /api/reviews/admin\n");
   });
 }

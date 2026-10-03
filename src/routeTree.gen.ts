@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WishlistRouteImport } from './routes/wishlist'
 import { Route as TermsConditionsRouteImport } from './routes/terms-conditions'
+import { Route as StonesRouteImport } from './routes/stones'
 import { Route as ShippingPolicyRouteImport } from './routes/shipping-policy'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as ReturnsRefundPolicyRouteImport } from './routes/returns-refund-policy'
@@ -29,6 +30,7 @@ import { Route as CartRouteImport } from './routes/cart'
 import { Route as BulkOrderRouteImport } from './routes/bulk-order'
 import { Route as AboutUsRouteImport } from './routes/about-us'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as StoneSlugRouteImport } from './routes/stone.$slug'
 import { Route as ProductSlugRouteImport } from './routes/product.$slug'
 import { Route as CategorySlugRouteImport } from './routes/category.$slug'
 
@@ -40,6 +42,11 @@ const WishlistRoute = WishlistRouteImport.update({
 const TermsConditionsRoute = TermsConditionsRouteImport.update({
   id: '/terms-conditions',
   path: '/terms-conditions',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StonesRoute = StonesRouteImport.update({
+  id: '/stones',
+  path: '/stones',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ShippingPolicyRoute = ShippingPolicyRouteImport.update({
@@ -132,6 +139,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StoneSlugRoute = StoneSlugRouteImport.update({
+  id: '/stone/$slug',
+  path: '/stone/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProductSlugRoute = ProductSlugRouteImport.update({
   id: '/product/$slug',
   path: '/product/$slug',
@@ -162,10 +174,12 @@ export interface FileRoutesByFullPath {
   '/returns-refund-policy': typeof ReturnsRefundPolicyRoute
   '/search': typeof SearchRoute
   '/shipping-policy': typeof ShippingPolicyRoute
+  '/stones': typeof StonesRoute
   '/terms-conditions': typeof TermsConditionsRoute
   '/wishlist': typeof WishlistRoute
   '/category/$slug': typeof CategorySlugRoute
   '/product/$slug': typeof ProductSlugRoute
+  '/stone/$slug': typeof StoneSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -186,10 +200,12 @@ export interface FileRoutesByTo {
   '/returns-refund-policy': typeof ReturnsRefundPolicyRoute
   '/search': typeof SearchRoute
   '/shipping-policy': typeof ShippingPolicyRoute
+  '/stones': typeof StonesRoute
   '/terms-conditions': typeof TermsConditionsRoute
   '/wishlist': typeof WishlistRoute
   '/category/$slug': typeof CategorySlugRoute
   '/product/$slug': typeof ProductSlugRoute
+  '/stone/$slug': typeof StoneSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -211,10 +227,12 @@ export interface FileRoutesById {
   '/returns-refund-policy': typeof ReturnsRefundPolicyRoute
   '/search': typeof SearchRoute
   '/shipping-policy': typeof ShippingPolicyRoute
+  '/stones': typeof StonesRoute
   '/terms-conditions': typeof TermsConditionsRoute
   '/wishlist': typeof WishlistRoute
   '/category/$slug': typeof CategorySlugRoute
   '/product/$slug': typeof ProductSlugRoute
+  '/stone/$slug': typeof StoneSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -237,10 +255,12 @@ export interface FileRouteTypes {
     | '/returns-refund-policy'
     | '/search'
     | '/shipping-policy'
+    | '/stones'
     | '/terms-conditions'
     | '/wishlist'
     | '/category/$slug'
     | '/product/$slug'
+    | '/stone/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -261,10 +281,12 @@ export interface FileRouteTypes {
     | '/returns-refund-policy'
     | '/search'
     | '/shipping-policy'
+    | '/stones'
     | '/terms-conditions'
     | '/wishlist'
     | '/category/$slug'
     | '/product/$slug'
+    | '/stone/$slug'
   id:
     | '__root__'
     | '/'
@@ -285,10 +307,12 @@ export interface FileRouteTypes {
     | '/returns-refund-policy'
     | '/search'
     | '/shipping-policy'
+    | '/stones'
     | '/terms-conditions'
     | '/wishlist'
     | '/category/$slug'
     | '/product/$slug'
+    | '/stone/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -310,10 +334,12 @@ export interface RootRouteChildren {
   ReturnsRefundPolicyRoute: typeof ReturnsRefundPolicyRoute
   SearchRoute: typeof SearchRoute
   ShippingPolicyRoute: typeof ShippingPolicyRoute
+  StonesRoute: typeof StonesRoute
   TermsConditionsRoute: typeof TermsConditionsRoute
   WishlistRoute: typeof WishlistRoute
   CategorySlugRoute: typeof CategorySlugRoute
   ProductSlugRoute: typeof ProductSlugRoute
+  StoneSlugRoute: typeof StoneSlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -330,6 +356,13 @@ declare module '@tanstack/react-router' {
       path: '/terms-conditions'
       fullPath: '/terms-conditions'
       preLoaderRoute: typeof TermsConditionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/stones': {
+      id: '/stones'
+      path: '/stones'
+      fullPath: '/stones'
+      preLoaderRoute: typeof StonesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/shipping-policy': {
@@ -458,6 +491,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/stone/$slug': {
+      id: '/stone/$slug'
+      path: '/stone/$slug'
+      fullPath: '/stone/$slug'
+      preLoaderRoute: typeof StoneSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/product/$slug': {
       id: '/product/$slug'
       path: '/product/$slug'
@@ -494,10 +534,12 @@ const rootRouteChildren: RootRouteChildren = {
   ReturnsRefundPolicyRoute: ReturnsRefundPolicyRoute,
   SearchRoute: SearchRoute,
   ShippingPolicyRoute: ShippingPolicyRoute,
+  StonesRoute: StonesRoute,
   TermsConditionsRoute: TermsConditionsRoute,
   WishlistRoute: WishlistRoute,
   CategorySlugRoute: CategorySlugRoute,
   ProductSlugRoute: ProductSlugRoute,
+  StoneSlugRoute: StoneSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

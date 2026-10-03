@@ -8,10 +8,11 @@ import { supabase } from "@/lib/supabase";
 import { normaliseProductForSearch, type SearchResult } from "@/lib/search";
 
 const nav = [
-  { label: "Shop", to: "/" },
+  { label: "Shop",          to: "/" },
+  { label: "By Crystal",    to: "/stones" },
   { label: "Palm Analysis", to: "/hand-analysis" },
-  { label: "Track Order", to: "/order-tracking" },
-  { label: "Categories", to: "/categories" }
+  { label: "Track Order",   to: "/order-tracking" },
+  { label: "Categories",    to: "/categories" },
 ];
 
 export function Header() {

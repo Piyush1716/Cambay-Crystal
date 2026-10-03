@@ -84,6 +84,7 @@ export type ApiProduct = {
   categoryName?: string;
   categories?: ApiCategory | null;
   product_images?: Array<{ id: number; product_id: number; image_url: string; sort_order: number }>;
+  stones?: Array<{ id: number; name: string; slug: string }>;
 };
 
 export type ApiCategory = {
@@ -94,6 +95,17 @@ export type ApiCategory = {
   image_url: string | null;
   available: boolean;
   home: boolean;
+  created_at: string;
+};
+
+export type ApiStone = {
+  id: number;
+  slug: string;
+  name: string;
+  img: string;
+  image_url: string | null;
+  description: string | null;
+  available: boolean;
   created_at: string;
 };
 
@@ -183,6 +195,23 @@ export async function fetchHomeCategories() {
 export async function fetchCategoryBySlug(slug: string) {
   console.log(`[api/categories] Fetching category by slug: ${slug}`);
   return apiFetch<ApiCategory>(`/api/categories/${encodeURIComponent(slug)}`);
+}
+
+// ─── Stones ───────────────────────────────────────────────────────────────────
+
+export async function fetchAllStones() {
+  console.log("[api/stones] Fetching all stones");
+  return apiFetch<ApiStone[]>("/api/stones");
+}
+
+export async function fetchStoneBySlug(slug: string) {
+  console.log(`[api/stones] Fetching stone by slug: ${slug}`);
+  return apiFetch<ApiStone>(`/api/stones/${encodeURIComponent(slug)}`);
+}
+
+export async function fetchProductsByStone(slug: string) {
+  console.log(`[api/stones] Fetching products for stone: ${slug}`);
+  return apiFetch<ApiProduct[]>(`/api/stones/${encodeURIComponent(slug)}/products`);
 }
 
 // ─── Orders ───────────────────────────────────────────────────────────────────

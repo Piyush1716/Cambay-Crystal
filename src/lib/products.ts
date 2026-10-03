@@ -17,8 +17,12 @@ import {
   fetchAllCategories as apiFetchAllCategories,
   fetchHomeCategories as apiFetchHomeCategories,
   fetchCategoryBySlug as apiFetchCategoryBySlug,
+  fetchAllStones as apiFetchAllStones,
+  fetchStoneBySlug as apiFetchStoneBySlug,
+  fetchProductsByStone as apiFetchProductsByStone,
   type ApiProduct,
   type ApiCategory,
+  type ApiStone,
 } from "@/services/api";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -73,6 +77,8 @@ export type Product = ApiProduct & {
   stone?: string;
   benefits?: string[];
   sizes?: string[];
+  // Stones (many-to-many)
+  stones?: StoneRef[];
 };
 
 export type Category = {
@@ -83,6 +89,21 @@ export type Category = {
   available: boolean;
   home: boolean;
   description?: string;
+};
+
+export type StoneRef = {
+  id: number;
+  name: string;
+  slug: string;
+};
+
+export type Stone = ApiStone & {
+  id: number;
+  slug: string;
+  name: string;
+  img: string;
+  description: string | null;
+  available: boolean;
 };
 
 // ─── Slug helper (kept for any client-side slug generation) ──────────────────
@@ -110,6 +131,7 @@ function adaptProduct(p: ApiProduct): Product {
     categorySlug: p.categorySlug,
     categoryName: p.categoryName,
     gallery: p.gallery ?? [],
+    stones: p.stones ?? [],
   };
 }
 
@@ -174,6 +196,39 @@ export async function fetchCategoryBySlug(slug: string): Promise<Category | null
   const { data, error } = await apiFetchCategoryBySlug(slug);
   if (error || !data) return null;
   return adaptCategory(data);
+}
+
+// ─── Stone fetching ───────────────────────────────────────────────────────────
+
+function adaptStone(s: ApiStone): Stone {
+  return {
+    id: s.id,
+    slug: s.slug,
+    name: s.name,
+    img: s.img,
+    image_url: s.image_url,
+    description: s.description ?? null,
+    available: s.available,
+    created_at: s.created_at,
+  };
+}
+
+export async function fetchAllStones(): Promise<Stone[]> {
+  const { data, error } = await apiFetchAllStones();
+  if (error || !data) return [];
+  return data.map(adaptStone);
+}
+
+export async function fetchStoneBySlug(slug: string): Promise<Stone | null> {
+  const { data, error } = await apiFetchStoneBySlug(slug);
+  if (error || !data) return null;
+  return adaptStone(data);
+}
+
+export async function fetchProductsByStone(slug: string): Promise<Product[]> {
+  const { data, error } = await apiFetchProductsByStone(slug);
+  if (error || !data) return [];
+  return data.map(adaptProduct);
 }
 
 // ─── Storage URL helper (kept for any remaining direct usage) ─────────────────

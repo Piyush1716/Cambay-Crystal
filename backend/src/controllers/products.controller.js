@@ -49,6 +49,14 @@ function normaliseProduct(row) {
 
   const joined = row.categories ?? null;
 
+  const stones = (row.product_stones ?? [])
+    .filter((ps) => ps.stones)
+    .map((ps) => ({
+      id: ps.stones.id,
+      name: ps.stones.name,
+      slug: ps.stones.slug,
+    }));
+
   return {
     id: row.id,
     title: row.title,
@@ -70,6 +78,8 @@ function normaliseProduct(row) {
     categoryName: joined?.name ?? undefined,
     categories: joined,
     product_images: row.product_images,
+    product_stones: row.product_stones,
+    stones,
   };
 }
 
@@ -95,7 +105,7 @@ export async function getProducts(req, res, next) {
 
     const { data, error } = await supabase
       .from("products")
-      .select("*, categories(*), product_images(*)")
+      .select("*, categories(*), product_images(*), product_stones(stones(*))")
       .eq("available", true)
       .order("created_at", { ascending: false });
 
@@ -163,7 +173,7 @@ export async function getProductBySlug(req, res, next) {
 
     const { data, error } = await supabase
       .from("products")
-      .select("*, categories(*), product_images(*)")
+      .select("*, categories(*), product_images(*), product_stones(stones(*))")
       .eq("slug", slug)
       .eq("available", true)
       .single();
@@ -173,7 +183,7 @@ export async function getProductBySlug(req, res, next) {
       console.log(`[products] Slug column miss — falling back to title search for: ${slug}`);
       const { data: allData, error: allError } = await supabase
         .from("products")
-        .select("*, categories(*), product_images(*)")
+        .select("*, categories(*), product_images(*), product_stones(stones(*))")
         .eq("available", true);
 
       if (allError) {
@@ -213,7 +223,7 @@ export async function getProductById(req, res, next) {
 
     const { data, error } = await supabase
       .from("products")
-      .select("*, categories(*), product_images(*)")
+      .select("*, categories(*), product_images(*), product_stones(stones(*))")
       .eq("id", id)
       .eq("available", true)
       .single();
@@ -252,7 +262,7 @@ export async function getProductsByCategory(req, res, next) {
 
     const { data, error } = await supabase
       .from("products")
-      .select("*, categories(*), product_images(*)")
+      .select("*, categories(*), product_images(*), product_stones(stones(*))")
       .eq("category_id", catData.id)
       .eq("available", true)
       .order("created_at", { ascending: false });

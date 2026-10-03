@@ -351,12 +351,48 @@ function ProductPage() {
                 </div>
               </div>
 
-              {product.categoryName && (
-                <p className="text-xs text-muted-foreground mt-6">
-                  <span className="font-medium text-foreground">Category:</span> {product.categoryName}
-                  {product.stone && <> · <span className="font-medium text-foreground">Stone:</span> {product.stone}</>}
-                </p>
-              )}
+              <div className="space-y-1.5 mt-6 text-xs text-muted-foreground">
+                {product.categoryName && (
+                  <p>
+                    <span className="font-medium text-foreground">Category:</span>{" "}
+                    {product.categorySlug ? (
+                      <Link
+                        to="/category/$slug"
+                        params={{ slug: product.categorySlug }}
+                        className="hover:text-primary transition underline-offset-2 hover:underline"
+                      >
+                        {product.categoryName}
+                      </Link>
+                    ) : (
+                      product.categoryName
+                    )}
+                  </p>
+                )}
+
+                {product.stones && product.stones.length > 0 ? (
+                  <p className="flex flex-wrap items-center gap-1.5">
+                    <span className="font-medium text-foreground">
+                      {product.stones.length > 1 ? "Stones:" : "Stone:"}
+                    </span>
+                    {product.stones.map((s, idx) => (
+                      <span key={s.slug} className="inline-flex items-center">
+                        <Link
+                          to="/stone/$slug"
+                          params={{ slug: s.slug }}
+                          className="text-primary font-medium hover:underline hover:text-primary/80 transition"
+                        >
+                          {s.name}
+                        </Link>
+                        {idx < product.stones!.length - 1 && <span className="text-muted-foreground ml-1">,</span>}
+                      </span>
+                    ))}
+                  </p>
+                ) : product.stone ? (
+                  <p>
+                    <span className="font-medium text-foreground">Stone:</span> {product.stone}
+                  </p>
+                ) : null}
+              </div>
             </div>
           </div>
         </section>
