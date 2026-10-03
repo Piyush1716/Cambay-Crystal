@@ -35,3 +35,7 @@ __pycache__
 *.pyc
 admin_panel/
 chat_api/
+
+# Spec Kit
+.gemini/
+.specify/
