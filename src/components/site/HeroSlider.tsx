@@ -64,19 +64,19 @@ export function HeroSlider() {
 
   return (
     <section
-      className="group relative w-full overflow-hidden select-none bg-[#F7F5F0]"
+      className="group relative w-full overflow-hidden select-none bg-white"
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
-      <div className="relative h-[480px] sm:h-[520px] md:h-[580px] lg:h-[620px] overflow-hidden">
+      <div className="hero-slider-container relative overflow-hidden bg-white">
         {slides.map((s, idx) => (
           <div
             key={idx}
             onClick={() => navigate({ to: s.link })}
-            className={`absolute inset-0 cursor-pointer transition-all duration-700 ease-out ${
+            className={`absolute inset-0 cursor-pointer transition-opacity duration-500 ease-in-out ${
               i === idx
-                ? "opacity-100 scale-100 pointer-events-auto"
-                : "opacity-0 scale-[1.02] pointer-events-none"
+                ? "opacity-100 pointer-events-auto"
+                : "opacity-0 pointer-events-none"
             }`}
             aria-hidden={i !== idx}
           >
@@ -86,7 +86,7 @@ export function HeroSlider() {
               <img
                 src={s.desktopImg}
                 alt={s.title}
-                className="w-full h-full object-cover object-center"
+                className="hero-slider-img"
                 loading={idx === 0 ? "eager" : "lazy"}
               />
             </picture>
